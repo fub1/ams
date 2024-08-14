@@ -14,11 +14,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.core.ui.viewmodel.LoginViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hiltViewModel()) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -42,25 +45,48 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hi
             verticalArrangement = Arrangement.Center
         ) {
             OutlinedTextField(
-                value = viewModel.username,
-                onValueChange = { viewModel.username = it },
+                value = uiState.value.username,
+                onValueChange = { viewModel.onUsernameChanged(it) },
                 label = { Text("Username") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = uiState.value.usernameError != null
             )
+            if (uiState.value.usernameError != null) {
+                Text(
+                    text = uiState.value.usernameError!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
-                value = viewModel.password,
-                onValueChange = { viewModel.password = it },
+                value = uiState.value.password,
+                onValueChange = { viewModel.onPasswordChanged(it) },
                 label = { Text("Password") },
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                isError = uiState.value.passwordError != null
             )
+            if (uiState.value.passwordError != null) {
+                Text(
+                    text = uiState.value.passwordError!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
             Spacer(modifier = Modifier.height(32.dp))
+
             Button(
                 onClick = { viewModel.onLoginClick() },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.value.isLoading
             ) {
                 Text("Login")
+            }
+            // Show loading indicator if necessary
+            if (uiState.value.isLoading) {
+                CircularProgressIndicator()
             }
         }
     }

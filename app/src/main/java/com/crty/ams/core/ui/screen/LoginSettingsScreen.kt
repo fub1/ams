@@ -15,11 +15,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.core.ui.viewmodel.LoginSettingsViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginSettingsScreen(navController: NavHostController, viewModel: LoginSettingsViewModel = hiltViewModel()) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -43,20 +49,16 @@ fun LoginSettingsScreen(navController: NavHostController, viewModel: LoginSettin
             verticalArrangement = Arrangement.Center
         ) {
             OutlinedTextField(
-                value = viewModel.serverName,
-                onValueChange = { viewModel.serverName = it },
-                label = { Text("Server Name (e.g., http://localhost)") },
+                value = uiState.value.serverName,
+                onValueChange = { viewModel.onServerNameChanged(it) },
+                label = { Text("Server Name (e.g., http://example.com)") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = viewModel.serverPort.toString(),
-                onValueChange = {
-                    viewModel.serverPort = try {
-                        it.toInt()
-                    } catch (e: NumberFormatException) {
-                        8080 // Default port
-                    }
+                value = uiState.value.serverPort.toString(),
+                onValueChange = { newValue ->
+                    viewModel.onServerPortChanged(newValue)
                 },
                 label = { Text("Server Port") },
                 modifier = Modifier.fillMaxWidth(),
@@ -64,7 +66,11 @@ fun LoginSettingsScreen(navController: NavHostController, viewModel: LoginSettin
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(
-                onClick = { viewModel.saveSettings() },
+                onClick = {
+                    coroutineScope.launch {  // Launch in a coroutine
+                        viewModel.onSaveSettingsClick()
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Settings")
