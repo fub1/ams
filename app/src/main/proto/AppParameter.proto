@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "com.crty.ams";
+option java_multiple_files = true;
+
+message AppParameter {
+    string PDA_Brand = 1;
+    string PDA_SN = 2;
+    string PDA_SDK_Type = 3;
+    string Token = 4;  // keystore is better to store this
+    string base_url = 5;
+    int32 base_port = 6;
+}

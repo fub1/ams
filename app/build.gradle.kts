@@ -32,6 +32,9 @@ plugins {
     alias(libs.plugins.ksp)
     //kotlin2.0+ with compose.compiler
     alias(libs.plugins.compose.compiler)
+    //for datastore-protobuf
+    alias(libs.plugins.google.protobuf)
+
 }
 
 
@@ -97,6 +100,34 @@ android {
         }
     }
 }
+
+// protobuf settings
+// Setup protobuf configuration, generating lite Java and Kotlin classes
+// reference nowinandroid
+// Proto DataStore 默认要求在 app/src/main/proto/ 目录下的 proto 文件中保存预定义的架构。（下面改写了这个路径）
+// 此架构用于定义您在 Proto DataStore 中保存的对象的类型。
+protobuf {
+    protoc {
+        artifact = libs.google.protobuf.protoc.get().toString()
+    }
+
+    // Generates the java Protobuf-lite code for the Protobuf in this project. See
+    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+    // for more information.
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
+}
+
+
+
+
 
 dependencies {
 
@@ -227,6 +258,10 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     // 8-2 DataStore-Proto
     implementation(libs.androidx.datastore.proto)
+    // 8-3 DataStore-Proto: google protobuf
+    implementation(libs.google.protobuf.javalite)
+    implementation(libs.google.protobuf.protoc)
+
 
     // Libs Group10: WorkManager
     // https://developer.android.com/jetpack/androidx/releases/work
@@ -250,5 +285,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
 }
+
 
 

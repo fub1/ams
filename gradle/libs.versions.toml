@@ -63,6 +63,8 @@ room = "2.6.1"
 
 # Libs Group9: Preferences DataStore & Proto DataStore
 datastore = "1.1.1"
+google-protobuf = "4.27.2"
+google-protobuf-plugins = "0.9.4"
 
 # Libs Group10: WorkManager
 work = "2.9.1"
@@ -170,6 +172,10 @@ room-paging = { group = "androidx.room", name = "room-paging", version.ref = "ro
 # https://developer.android.com/jetpack/androidx/releases/datastore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 androidx-datastore-proto = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
+google-protobuf-javalite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "google-protobuf" }
+google-protobuf-protoc= { group = "com.google.protobuf", name = "protoc", version.ref = "google-protobuf" }
+
+
 
 # Libs Group10: WorkManager
 # https://developer.android.com/jetpack/androidx/releases/work
@@ -201,3 +207,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+# options for proto
+google-protobuf = { id = "com.google.protobuf", version.ref = "google-protobuf-plugins" }
