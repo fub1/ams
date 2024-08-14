@@ -51,7 +51,7 @@ fun LoginSettingsScreen(navController: NavHostController, viewModel: LoginSettin
             OutlinedTextField(
                 value = uiState.value.serverName,
                 onValueChange = { viewModel.onServerNameChanged(it) },
-                label = { Text("Server Name (e.g., http://example.com)") },
+                label = { Text("Server Name (e.g., http://ams.ydcw.com)") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
