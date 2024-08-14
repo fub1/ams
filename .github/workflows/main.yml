@@ -1,0 +1,5 @@
+            - name: Android Emulator (faruktoptas)
+  # You may pin to the exact commit or the version.
+  # uses: faruktoptas/android-github-actions-emulator@e2ffe55999aba8b1bd16e1711a373c3aeac7327d
+  uses: faruktoptas/android-github-actions-emulator@1.1.0
+          
