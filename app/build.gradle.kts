@@ -106,6 +106,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     // To use the Animator APIs
     implementation(libs.androidx.core.animation)
+
     // To test the Animator APIs
     androidTestImplementation(libs.androidx.core.animation.testing)
     // Optional - to support backwards compatibility of RemoteViews
@@ -197,7 +198,7 @@ dependencies {
     // 6-1 Navigation Kotlin
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
-
+    implementation(libs.androidx.hilt.navigation.compose)
     // 6-2 Testing Navigation
     androidTestImplementation(libs.androidx.navigation.testing)
     // 6-3 Jetpack Compose Integration

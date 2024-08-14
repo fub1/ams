@@ -1,3 +1,4 @@
+// LoginSettingsScreen.kt
 package com.crty.ams.ui.screen
 
 import android.annotation.SuppressLint
@@ -9,17 +10,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.crty.ams.ui.viewmodel.LoginSettingsViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginSettingsScreen(navController: NavHostController) {
-    var serverName by remember { mutableStateOf("http://localhost") }
-    var serverPort by remember { mutableStateOf(8080) }
-
+fun LoginSettingsScreen(navController: NavHostController, viewModel: LoginSettingsViewModel = hiltViewModel()) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -27,7 +28,7 @@ fun LoginSettingsScreen(navController: NavHostController) {
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -43,19 +44,19 @@ fun LoginSettingsScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Center
         ) {
             OutlinedTextField(
-                value = serverName,
-                onValueChange = { serverName = it },
+                value = viewModel.serverName,
+                onValueChange = { viewModel.serverName = it },
                 label = { Text("Server Name (e.g., http://localhost)") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = serverPort.toString(),
+                value = viewModel.serverPort.toString(),
                 onValueChange = {
-                    serverPort = try {
+                    viewModel.serverPort = try {
                         it.toInt()
                     } catch (e: NumberFormatException) {
-                        8080
+                        8080 // Default port
                     }
                 },
                 label = { Text("Server Port") },
@@ -64,7 +65,7 @@ fun LoginSettingsScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(
-                onClick = { /* TODO: Handle saving settings */ },
+                onClick = { viewModel.saveSettings() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Settings")
