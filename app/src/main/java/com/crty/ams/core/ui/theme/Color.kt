@@ -1,4 +1,4 @@
-package com.crty.ams.ui.theme
+package com.crty.ams.core.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF006876)

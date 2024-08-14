@@ -1,13 +1,12 @@
-package com.crty.ams.ui.navigation
+package com.crty.ams.core.ui.navigation
 
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavHostController
-import com.crty.ams.ui.screen.LoginScreen
-import com.crty.ams.ui.screen.LoginSettingsScreen
+import com.crty.ams.core.ui.screen.LoginScreen
+import com.crty.ams.core.ui.screen.LoginSettingsScreen
 
 @Composable
 fun AppNavigation() {

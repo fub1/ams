@@ -1,4 +1,4 @@
-package com.crty.ams.ui.theme
+package com.crty.ams.core.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

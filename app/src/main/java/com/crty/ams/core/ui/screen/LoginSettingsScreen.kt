@@ -1,5 +1,5 @@
 // LoginSettingsScreen.kt
-package com.crty.ams.ui.screen
+package com.crty.ams.core.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
@@ -11,11 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.crty.ams.ui.viewmodel.LoginSettingsViewModel
+import com.crty.ams.core.ui.viewmodel.LoginSettingsViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

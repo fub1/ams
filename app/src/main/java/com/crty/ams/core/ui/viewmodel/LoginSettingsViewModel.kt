@@ -1,5 +1,5 @@
 // LoginSettingsViewModel.kt
-package com.crty.ams.ui.viewmodel
+package com.crty.ams.core.ui.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
