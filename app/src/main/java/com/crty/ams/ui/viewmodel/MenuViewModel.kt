@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
-    var username by mutableStateOf("")
-    var password by mutableStateOf("")
+class MenuViewModel @Inject constructor() : ViewModel() {
+    var selectedTab by mutableStateOf("assets")
 
     private var _isLoggedIn = MutableStateFlow(false)//用来监听是否登录成功
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
