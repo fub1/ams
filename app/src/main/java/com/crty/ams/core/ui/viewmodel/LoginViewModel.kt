@@ -21,6 +21,9 @@ class LoginViewModel @Inject constructor(
     private val _isUserNameError = MutableStateFlow(false)
     private val _isPasswordError = MutableStateFlow(false)
 
+    private val _isLoggedIn = MutableStateFlow(false)//用来监听是否登录成功
+//    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+
     val uiState: StateFlow<LoginUiState> = combine(
         _username, _password, _isLoading, _isUserNameError, _isPasswordError
     ) { username, password, isLoading, isUserNameError, isPasswordError ->
@@ -37,6 +40,18 @@ class LoginViewModel @Inject constructor(
         started = SharingStarted.Eagerly, // Trigger initial validation
         initialValue = LoginUiState()
     )
+
+//    val uiState2: StateFlow<LoginUiState2> = combine(
+//        _isLoggedIn
+//    ){ isLoggedIn ->
+//        LoginUiState2(
+//            isLoggedIn = isLoggedIn
+//        )
+//    }.stateIn(
+//        scope = viewModelScope,
+//        started = SharingStarted.Eagerly,
+//        initialValue = LoginUiState2()
+//    )
 
     fun onUsernameChanged(newUsername: String) {
         _username.value = newUsername
@@ -55,6 +70,8 @@ class LoginViewModel @Inject constructor(
                     delay(7000)
 
                     // Perform validation
+
+                    _isLoggedIn.value = true//模拟登陆成功
                 }
             } catch (e: TimeoutCancellationException) {
                 _isLoading.value = false
@@ -90,3 +107,6 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val loginError: String? = null
 )
+//data class LoginUiState2(
+//    val isLoggedIn: Boolean = false
+//)

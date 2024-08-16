@@ -12,8 +12,10 @@ import com.crty.ams.core.ui.theme.AmsTheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.crty.ams.core.data.repository.AppParameterRepository
 import com.crty.ams.core.data.datastore.di.AppParameterDataStore
+import com.crty.ams.core.ui.navigation.RouteList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -33,7 +35,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AmsTheme {
-                AppNavigation()
+                AppNavigation(start = RouteList.Login)
 
 
             }

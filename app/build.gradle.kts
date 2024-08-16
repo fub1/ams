@@ -130,6 +130,7 @@ protobuf {
 
 
 dependencies {
+    implementation (libs.kotlinx.serialization.json)
 
     // Libs Group1: AndroidX.core
     // https://developer.android.com/jetpack/androidx/releases/core
