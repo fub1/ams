@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.crty.ams.core.ui.compose.roll_list.ComposeScreen
 import com.crty.ams.core.ui.screen.HomeScreen
 import com.crty.ams.core.ui.screen.LoginScreen
 import com.crty.ams.core.ui.screen.LoginSettingsScreen
-import com.crty.ams.core.ui.screen.SystemSettingsScreen
 
 @Composable
 fun AppNavigation(start: RouteList) {
@@ -23,6 +23,9 @@ fun AppNavigation(start: RouteList) {
         composable(route = RouteList.Home.description) {
             HomeScreen(navController)
         }
+        composable(route = RouteList.Test.description) {
+            ComposeScreen(navController)
+        }
     }
 }
 
@@ -32,5 +35,6 @@ fun AppNavigation(start: RouteList) {
 enum class RouteList(val description: String) {
     Login("login"),
     Settings("settings"),
-    Home("home")
+    Home("home"),
+    Test("compose")
 }

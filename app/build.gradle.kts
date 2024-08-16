@@ -130,7 +130,7 @@ protobuf {
 
 
 dependencies {
-    implementation (libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.json.v151) // 确保版本与你的插件版本匹配
 
     // Libs Group1: AndroidX.core
     // https://developer.android.com/jetpack/androidx/releases/core
@@ -138,6 +138,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     // To use the Animator APIs
     implementation(libs.androidx.core.animation)
+    implementation(libs.androidx.runtime.livedata)
 
     // To test the Animator APIs
     androidTestImplementation(libs.androidx.core.animation.testing)
