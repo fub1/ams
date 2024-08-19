@@ -137,6 +137,13 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     // To use the Animator APIs
     implementation(libs.androidx.core.animation)
+    implementation(libs.engage.core)
+
+    // permission
+    implementation(libs.google.accompanist.permissions)
+
+
+
 
     // To test the Animator APIs
     androidTestImplementation(libs.androidx.core.animation.testing)
@@ -279,10 +286,28 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
 
+    // Libs Group13： Coil
+    // https://coil-kt.github.io/coil/compose/
+    implementation(libs.coil.kt)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.kt.svg)
+
+    // Libs Group14: CameraX
+    // https://developer.android.com/jetpack/androidx/releases/camera?hl=zh-cn
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.extensions)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.lifecycle)
+
+
+
     // Libs Group-x
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+
 
 }
 
