@@ -1,152 +1,163 @@
 package com.crty.ams.core.ui.viewmodel
 
-import android.os.SystemClock.sleep
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.crty.ams.core.data.model.AttributeEntity
 import com.crty.ams.core.data.model.Event
-import com.crty.ams.core.data.repository.AttributeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-//UI state
-// 1- attributes: <List<AttributeEntity>  全部属性列表， 包括id、 parentId、 name
-// 2-1 firstLevelOptions: <List<AttributeEntity>  第一级属性列表， 包括id、 parentId、 name
-// 2-2 firstLevelSelected: <AttributeEntity>第一级选中的属性-  用于保存提交数据
-// 2-3 firstLevelString: <String>第一级EditableExposedDropdownMenu中的字符串-  用于显示
-// 3-1 secondLevelOptions: <List<AttributeEntity>  第二级属性列表， 包括id、 parentId、 name
-// 3-2 secondLevelSelected:<AttributeEntity>第二级选中的属性
-// 3-3 secondLevelString: <String>第二级EditableExposedDropdownMenu中的字符串-  用于显示
-// 4-1 thirdLevelOptions: <List<AttributeEntity>  第三级属性列表， 包括id、 parentId、 name
-// 4-2 thirdLevelSelected: <AttributeEntity>第三级选中的属性
-// 4-3 thirdLevelString: <String>第三级EditableExposedDropdownMenu中的字符串-  用于显示
-// 5- attributeName: <String>属性名称
-// 6-1 message: <Event<String>>界面消息
-// 6-2 addSuccess: <Event<Boolean>>属性添加成功
-// 7- showLoading: <Boolean>是否显示loading
-// 8- grandAddOrgPermission: <Boolean>是否有添加权限
-
 
 
 @HiltViewModel
-class AttributeViewModel @Inject constructor(
-    private val repository: AttributeRepository,
-    private val initialAttributeName: String = ""
+open class AttributeViewModel  @Inject constructor(
+
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UIState())
-    val uiState = _uiState.asStateFlow()
+    private val eventShowLoading = MutableStateFlow(false)
+    private val eventShowMessage = MutableStateFlow<Event<String>?>(null)
+    private val attributeMode = MutableStateFlow(AttributeViewMode.SELECT)
+    private val firstLevelAttributes = MutableStateFlow<List<AttributeEntity>>(emptyList())
+    private val secondLevelAttributes = MutableStateFlow<List<AttributeEntity>>(emptyList())
+    private val thirdLevelAttributes = MutableStateFlow<List<AttributeEntity>>(emptyList())
+    private val selectedFirstLevelId = MutableStateFlow<Int?>(null)
+    private val selectedSecondLevelId = MutableStateFlow<Int?>(null)
+    private val selectedThirdLevelId = MutableStateFlow<Int?>(null)
+
+
+
+    private var _allAttributes: List<AttributeEntity> = emptyList()
+
+
+    private val _state = MutableStateFlow(AttributeViewState())
+    open val state = _state.asStateFlow()
 
     init {
-        //
-        _uiState.value = _uiState.value.copy(showLoading = true)
-        if (initialAttributeName !in listOf("Organization", "Type", "Address")) {
-            _uiState.value = _uiState.value.copy(
-                message = Event("Invalid attribute name: $initialAttributeName")
-            )
-        } else {
+        viewModelScope.launch {
 
-            viewModelScope.launch {
-                try {
-                    when (initialAttributeName) {
-                        "Organization" -> {
-                            val attributes = repository.getAllAttributes("organization", AttributeEntity.Organization::class)
-                            _uiState.value = _uiState.value.copy(
-                                attributes = attributes,
-                            )
-                        }
-                        "Type" -> {
-                            val attributes = repository.getAllAttributes("type", AttributeEntity.Type::class)
-                            _uiState.value = _uiState.value.copy(
-                                attributes = attributes,
-                            )
-                        }
-                        "Address" -> {
-                            val attributes = repository.getAllAttributes("address", AttributeEntity.Address::class)
-                            _uiState.value = _uiState.value.copy(
-                                attributes = attributes,
-                            )
-                        }
-                    }
-                    // 一级数据初始化，只显示一级数据,默认显示第一个数据
-                    _uiState.value = _uiState.value.copy(
-                        firstLevelOptions = _uiState.value.attributes.filter { it.parentId == 0 },
-                        firstLevelSelectedId = _uiState.value.firstLevelOptions.firstOrNull()?.id,
-                        showLoading = false
+            combine(
+                eventShowLoading,
+                eventShowMessage,
+                attributeMode,
+                firstLevelAttributes,
+                secondLevelAttributes,
+                thirdLevelAttributes,
+                selectedFirstLevelId,
+                selectedSecondLevelId,
+                selectedThirdLevelId,
+
+
+            ) { arrayOfValues: Array<Any?> ->
+                val showLoading = arrayOfValues[0] as Boolean
+                val showMessage = arrayOfValues[1] as Event<*>?
+                val mode = arrayOfValues[2] as AttributeViewMode
+                val firstLevelAttributes = arrayOfValues[3] as List<AttributeEntity>?
+                val secondLevelAttributes = arrayOfValues[4] as List<AttributeEntity>?
+                val thirdLevelAttributes = arrayOfValues[5] as List<AttributeEntity>?
+                val selectedFirstLevelId = arrayOfValues[6] as Int?
+                val selectedSecondLevelId = arrayOfValues[7] as Int?
+                val selectedThirdLevelId = arrayOfValues[8] as Int?
+
+                AttributeViewState(
+                    loading = showLoading,
+                    message = showMessage,
+                    mode = mode,
+                    firstLevelAttributes = firstLevelAttributes,
+                    secondLevelAttributes = secondLevelAttributes,
+                    thirdLevelAttributes = thirdLevelAttributes,
+                    selectedFirstLevelId = selectedFirstLevelId,
+                    selectedSecondLevelId = selectedSecondLevelId,
+                    selectedThirdLevelId = selectedThirdLevelId,
                     )
-
-
-
-
-                } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(
-                        showLoading = false,
-                        message = Event("Failed to fetch $initialAttributeName: ${e.message}")
-                    )
-                }
+            }.catch { throwable ->
+                throw throwable
+            }.collect {
+                _state.value = it
             }
         }
     }
 
-    // 数据选择器选择事件-L1
-    fun onFirstLevelSelected(revivedAttribute: AttributeEntity<*>) {
-        _uiState.value = _uiState.value.copy(
-            firstLevelString = revivedAttribute.name,
-            firstLevelSelectedId = revivedAttribute.id,
-            secondLevelOptions = _uiState.value.attributes.filter { it.parentId == revivedAttribute.id },
-            thirdLevelOptions = emptyList(),
-            )
-    }
+    fun fetchAllAttributes()
+    {
+        _allAttributes = listOf(
+            AttributeEntity(1, 0,"First Level Option 1"),
+            AttributeEntity(2, 0,"First Level Option 2"),
+            AttributeEntity(3, 2,"First Level Option 2-1"),
+            AttributeEntity(4, 2,"First Level Option 2-2"),
+            AttributeEntity(5, 4,"First Level Option 2-2-1"),
+            AttributeEntity(6, 4,"First Level Option 2-2-2"),
+            AttributeEntity(7, 1,"First Level Option 1-1"),
+            AttributeEntity(8, 0,"First Level Option 4"),
+            AttributeEntity(9, 0,"First Level Option 5"),
+            AttributeEntity(10, 0,"First Level Option 6"),
+        )
 
-    fun onSecondLevelSelected(revivedAttribute: AttributeEntity<*>) {
-        _uiState.value = _uiState.value.copy(
-            secondLevelString = revivedAttribute.name,
-            secondLevelSelectedId = revivedAttribute.id,
-            thirdLevelOptions = _uiState.value.attributes.filter { it.parentId == revivedAttribute.id },
+        _state.value = _state.value.copy(
+            firstLevelAttributes = _allAttributes.filter { it.parentId == 0 }
         )
     }
 
-    fun onThirdLevelSelected(revivedAttribute: AttributeEntity<*>) {
-        _uiState.value = _uiState.value.copy(
-            thirdLevelString = revivedAttribute.name,
-            thirdLevelSelectedId = revivedAttribute.id,
+    fun toAttributeCreateMode() {
+        fetchAllAttributes()
+        _state.value = _state.value.copy(
+            mode = AttributeViewMode.CREATE,
+            secondLevelAttributes = emptyList(),
+            thirdLevelAttributes = emptyList()
         )
     }
 
-    fun addAttribute() {
-        viewModelScope.launch {
-            //TODO
-            _uiState.value = _uiState.value.copy(showLoading = true)
-            sleep(1000)
-            _uiState.value = _uiState.value.copy(showLoading = true)
-        }
+    fun toAttributeSelectMode() {
+        fetchAllAttributes()
+        _state.value = _state.value.copy(
+            mode = AttributeViewMode.SELECT,
+            secondLevelAttributes = emptyList(),
+            thirdLevelAttributes = emptyList()
+        )
     }
 
-    fun submitAttribute() {
-        //todo
+    fun addAttribute(attrName: String, attrCode: String) {
+        //TODO
+    }
+
+    fun onFirstLevelSelected(id: Int) {
+        selectedSecondLevelId.value = null
+        selectedThirdLevelId.value = null
+        _state.value = _state.value.copy(
+            secondLevelAttributes = _allAttributes.filter { it.parentId == id }
+
+        )
+    }
+
+    fun onSecondLevelSelected(id: Int) {
+        selectedThirdLevelId.value = null
+        _state.value = _state.value.copy(
+            thirdLevelAttributes = _allAttributes.filter { it.parentId == id }
+
+        )
     }
 
 
 
-    data class UIState(
-        val attributes: List<AttributeEntity<*>> = emptyList(),
-        val firstLevelOptions: List<AttributeEntity<*>> = emptyList(),
-        val firstLevelSelectedId: Int? = null,
-        val firstLevelString: String = "",
-        val secondLevelOptions: List<AttributeEntity<*>> = emptyList(),
-        val secondLevelSelectedId: Int? = null,
-        val secondLevelString: String = "",
-        val thirdLevelOptions: List<AttributeEntity<*>> = emptyList(),
-        val thirdLevelSelectedId: Int? = null,
-        val thirdLevelString: String = "",
-        val attributeName: String = "",
-        val message: Event<String> = Event(""),
-        val addSuccess: Event<Boolean> = Event(false),
-        val showLoading: Boolean = false,
-        val grandAddOrgPermission: Boolean = true //默认有权限,TODO:后续根据权限控制
-    )
+
+
+
+
+    data class AttributeViewState(
+        val loading: Boolean = false,
+        val message: Event<*>? = null,
+        val mode: AttributeViewMode = AttributeViewMode.SELECT,
+        val firstLevelAttributes: List<AttributeEntity>? = emptyList<AttributeEntity>(),
+        val secondLevelAttributes: List<AttributeEntity>? = emptyList<AttributeEntity>(),
+        val thirdLevelAttributes: List<AttributeEntity>? = emptyList<AttributeEntity>(),
+        val selectedFirstLevelId: Int? = null,
+        val selectedSecondLevelId: Int? = null,
+        val selectedThirdLevelId: Int? = null,
+        )
+    // 页面选择状态、创建窗体
+    enum class AttributeViewMode { SELECT, CREATE }
 }

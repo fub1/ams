@@ -141,6 +141,7 @@ dependencies {
 
     // permission
     implementation(libs.google.accompanist.permissions)
+    implementation(libs.androidx.core.runtime)
 
 
 
@@ -306,6 +307,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.androidx.arch.core.testing)
+    // mock test
+    testImplementation(libs.mockk)
 
 
 

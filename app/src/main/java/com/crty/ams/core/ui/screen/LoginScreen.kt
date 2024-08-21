@@ -90,6 +90,17 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hi
             if (uiState.value.isLoading) {
                 CircularProgressIndicator()
             }
+            // 测试
+            Button(
+                onClick = {
+                    navController.navigate("attributeScreen")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Go to Attribute Screen")
+            }
+
+
         }
     }
 }

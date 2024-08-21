@@ -1,112 +1,137 @@
 package com.crty.ams.core.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.crty.ams.core.data.model.AttributeEntity
+import com.crty.ams.core.ui.component.Attribute.AddAttributeWithCodeSkeleton
+import com.crty.ams.core.ui.component.Attribute.SelectAttributeSkeleton
 import com.crty.ams.core.ui.component.LoadingContainer
-import com.crty.ams.core.ui.component.EditableExposedDropdownMenu
 import com.crty.ams.core.ui.viewmodel.AttributeViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AttributeBottomSheet(
-    attributeName: String,
-    onDismiss: () -> Unit
+fun AttributeScreen(
+    attributeType: String,
+    showSheet: MutableState<Boolean>,
+    // onConfirm: () -> Unit,
+    // onCancel: () -> Unit,
+    // onBack: () -> Unit,
+    viewModel: AttributeViewModel = hiltViewModel()
 ) {
-    val viewModel: AttributeViewModel = hiltViewModel() // Use hiltViewModel() directly
-    val uiState by viewModel.uiState.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
-    // Handle events
-    LaunchedEffect(uiState.message) {
-        uiState.message.getValueOnce()?.let { message ->
-            snackbarHostState.showSnackbar(message)
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        // Note: Remove the `remember` later. Issue: https://issuetracker.google.com/issues/340582180
+        confirmValueChange = remember {
+            { sheetState ->
+                sheetState != SheetValue.Hidden
+            }
         }
+    )
+
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchAllAttributes()
     }
 
+    LoadingContainer(
+        show = state.loading
+    )
+
     ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface
+        onDismissRequest = { showSheet.value = false },
+        sheetState = bottomSheetState
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Add icon (If permission granted)
-            if (uiState.grandAddOrgPermission) {
-                Button(onClick = {
-                    // TODO: Implement add attribute logic
-                    viewModel.addAttribute()
-                }) {
-                    Text("Add $attributeName")
+        when(state.mode) {
+            AttributeViewModel.AttributeViewMode.SELECT -> {
+                //选择模式
+                Column {
+                    Button(
+                        onClick = { viewModel.toAttributeCreateMode() },
+                    ) {
+                        Text("创建${attributeType}")
+                    }
+
+                    SelectAttributeSkeleton(
+                        attributeType = attributeType,
+                        firstLevelAttribute = state.firstLevelAttributes,
+                        secondLevelAttribute = state.secondLevelAttributes,
+                        thirdLevelAttribute = state.thirdLevelAttributes,
+                        firstLevelSelectId = mutableStateOf(state.selectedFirstLevelId),
+                        secondLevelSelectId = mutableStateOf(state.selectedSecondLevelId),
+                        thirdLevelSelectId = mutableStateOf(state.selectedThirdLevelId),
+                        onFirstLevelSelect = { viewModel.onFirstLevelSelected(it) },
+                        onSecondLevelSelect = { viewModel.onSecondLevelSelected(it) },
+                    )
                 }
-                Spacer(modifier = Modifier.padding(8.dp))
             }
 
-            // Title
-            Text(text = attributeName, style = MaterialTheme.typography.headlineSmall)
-            Spacer(modifier = Modifier.padding(8.dp))
-
-            // 1st level dropdown
-            EditableExposedDropdownMenu(
-                menuTip = "Select 1st level $attributeName",
-                options = uiState.firstLevelOptions.map { it.name },
-                selectedOption = uiState.firstLevelString,
-                onOptionSelected = { index ->
-                    viewModel.onFirstLevelSelected(uiState.firstLevelOptions[index.toInt()])
-                }
-            )
-            Spacer(modifier = Modifier.padding(8.dp))
-
-            // 2nd level dropdown (Only show if there are options)
-            if (uiState.secondLevelOptions.isNotEmpty()) {
-                EditableExposedDropdownMenu(
-                    menuTip = "Select 2nd level $attributeName",
-                    options = uiState.secondLevelOptions.map { it.name },
-                    selectedOption = uiState.secondLevelString,
-                    onOptionSelected = { index ->
-                        viewModel.onSecondLevelSelected(uiState.secondLevelOptions[index.toInt()])
+            AttributeViewModel.AttributeViewMode.CREATE -> {
+                AddAttributeWithCodeSkeleton(
+                    attributeType = attributeType,
+                    firstLevelAttribute = state.firstLevelAttributes,
+                    secondLevelAttribute = state.secondLevelAttributes,
+                    goBack = { viewModel.toAttributeSelectMode() },
+                    addAttribute = { attrName, attrCode ->
+                        viewModel.addAttribute(attrName, attrCode)
                     }
                 )
-                Spacer(modifier = Modifier.padding(8.dp))
             }
-
-            // 3rd level dropdown (Only show if there are options)
-            if (uiState.thirdLevelOptions.isNotEmpty()) {
-                EditableExposedDropdownMenu(
-                    menuTip = "Select 3rd level $attributeName",
-                    options = uiState.thirdLevelOptions.map { it.name },
-                    selectedOption = uiState.thirdLevelString,
-                    onOptionSelected = { index ->
-                        viewModel.onThirdLevelSelected(uiState.thirdLevelOptions[index.toInt()])
-                    }
-                )
-                Spacer(modifier = Modifier.padding(8.dp))
-            }
-
-            // Submit Button
-            Button(onClick = {
-                // TODO: Implement submit logic
-                viewModel.submitAttribute()
-                coroutineScope.launch {
-                    // Show a success message or handle submission result
-                    snackbarHostState.showSnackbar("Attribute submitted")
-                }
-            }) {
-                Text("Submit")
-            }
-
-            // Snackbar
-            SnackbarHost(hostState = snackbarHostState)
-
-            // Loading indicator
-            LoadingContainer(show = uiState.showLoading)
         }
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun AttributeScreenPreview() {
+    val showSheet = remember { mutableStateOf(false) }
+    val mockState = AttributeViewModel.AttributeViewState(
+        loading = false,
+        mode = AttributeViewModel.AttributeViewMode.CREATE,
+        firstLevelAttributes = listOf(
+            AttributeEntity(1, 0, "First Level Option 1"),
+            AttributeEntity(2, 0, "First Level Option 2")
+        ),
+        secondLevelAttributes = listOf(
+            AttributeEntity(3, 1, "Second Level Option 1"),
+            AttributeEntity(4, 1, "Second Level Option 2")
+        ),
+        thirdLevelAttributes = listOf(
+            AttributeEntity(5, 3, "Third Level Option 1"),
+            AttributeEntity(6, 3, "Third Level Option 2")
+        )
+    )
+    val mockViewModel = object : AttributeViewModel() {
+        @SuppressLint("UnrememberedMutableState")
+        override val state: StateFlow<AttributeViewState> = MutableStateFlow(mockState)
+    }
+    AttributeScreen(
+        attributeType = "Sample Type",
+        showSheet = showSheet,
+        //onConfirm = {},
+        //onCancel = {},
+        //onBack = {},
+        viewModel = mockViewModel
+    )
+}

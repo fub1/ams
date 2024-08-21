@@ -19,18 +19,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.crty.ams.core.data.model.AttributeEntity
 
 
 // 可编辑的下拉菜单
+// 下拉List中Option数据类型使用AttributeEntity,带有id和name
+// 由输入框和下拉菜单组成
 // AOSP
 // https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material3/material3/samples/src/main/java/androidx/compose/material3/samples/ExposedDropdownMenuSamples.kt;l=98?q=EditableExposedDropdownMenuSample&sq=
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditableExposedDropdownMenu(
+fun ExposedDropdownMenu(
     menuTip: String,
-    options: List<String>,
+    options: List<AttributeEntity>? = listOf(),
     selectedOption: String,
-    onOptionSelected: (String) -> Unit
+    onOptionSelected: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(selectedOption)) }
@@ -64,14 +67,14 @@ fun EditableExposedDropdownMenu(
                     .fillMaxWidth()
                     .heightIn(max = 200.dp)
             ) {
-                options.forEach { option ->
+                options?.forEach { option ->
                     DropdownMenuItem(
                         onClick = {
-                            textFieldValue = TextFieldValue(option)
-                            onOptionSelected(option)
+                            textFieldValue = TextFieldValue(option.name)
+                            onOptionSelected(option.id)
                             expanded = false
                         },
-                        text = { Text(text = option) }
+                        text = { Text(text = option.name) }
                     )
                 }
             }
@@ -83,10 +86,19 @@ fun EditableExposedDropdownMenu(
 @Preview(showBackground = true)
 @Composable
 fun ExposedDropdownMenuSamplePreview() {
-    EditableExposedDropdownMenu(
-        options = listOf("Option 1", "Option 2", "Option 3"),
+    ExposedDropdownMenu(
+        options = listOf(
+            AttributeEntity(1, 0,"Option 1"),
+            AttributeEntity(2, 0,"Option 2"),
+            AttributeEntity(3, 1,"Option 3"),
+            AttributeEntity(4, 2,"Option 4"),
+            AttributeEntity(5, 4,"Option 5"),
+            AttributeEntity(6, 3,"Option 6"),
+
+        ),
         menuTip = "Select an option",
         selectedOption = "Option 1",
         onOptionSelected = {}
     )
 }
+

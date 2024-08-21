@@ -12,6 +12,7 @@ import com.crty.ams.core.ui.theme.AmsTheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.crty.ams.core.data.repository.AppParameterRepository
 import com.crty.ams.core.data.datastore.di.AppParameterDataStore
+import com.crty.ams.core.ui.screen.AttributeScreen
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,6 +35,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             AmsTheme {
                 AppNavigation()
+
+
 
 
             }
