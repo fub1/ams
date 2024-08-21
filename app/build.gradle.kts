@@ -35,6 +35,8 @@ plugins {
     //for datastore-protobuf
     alias(libs.plugins.google.protobuf)
 
+//    kotlin("plugin.serialization") version "1.8.0" // 请根据实际的 Kotlin 版本调整 240819
+
 }
 
 
@@ -130,7 +132,14 @@ protobuf {
 
 
 dependencies {
-    implementation(libs.kotlinx.serialization.json.v151) // 确保版本与你的插件版本匹配
+    // Moshi
+//    implementation(libs.converter.moshi)
+
+//    implementation(libs.logging.interceptor) // 照相功能用
+//    implementation(libs.kotlinx.serialization.json.v151) // dataPicker用
+//    implementation(libs.ucrop) // 照相功能用
+//    implementation(libs.timber) // 照相功能用
+    implementation(libs.coil.compose)
 
     // Libs Group1: AndroidX.core
     // https://developer.android.com/jetpack/androidx/releases/core

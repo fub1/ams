@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.core.ui.viewmodel.AssetViewModel
-import com.example.citypicker.SimonCityPicker
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,13 +31,14 @@ fun ComposeScreen(navController: NavHostController, viewModel: AssetViewModel = 
     var isCity by remember { mutableStateOf(false) }
     Scaffold{
         listCompose()
-        SimonCityPicker(
-            context = context,
-            isCity = isCity,
-            onCitySelected = { city ->
-                selectedCity=city
-                isCity = false
-            })
+//        SimonCityPicker(
+//            context = context,
+//            isCity = isCity,
+//            onCitySelected = { city ->
+//                selectedCity=city
+//                isCity = false
+//            })
+//        DeviceEntryScreen()
     }
 }
 

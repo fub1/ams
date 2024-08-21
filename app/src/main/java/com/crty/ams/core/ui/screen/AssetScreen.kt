@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.core.ui.viewmodel.AssetViewModel
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.unit.dp
@@ -80,7 +79,12 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
                 popUpTo("home") { inclusive = true }
             }
         }
-        2 -> println("Favorites button clicked")
+        2 -> {
+            println("Favorites button clicked")
+            navController.navigate("picker"){
+                popUpTo("home") { inclusive = true }
+            }
+        }
         3 -> println("Settings button clicked")
         4 -> println("Profile button clicked")
         5 -> println("Messages button clicked")
