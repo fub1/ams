@@ -37,7 +37,7 @@ fun ExposedDropdownMenu(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(selectedOption)) }
-
+    textFieldValue = TextFieldValue(selectedOption)
     Column {
         ExposedDropdownMenuBox(
             expanded = expanded,

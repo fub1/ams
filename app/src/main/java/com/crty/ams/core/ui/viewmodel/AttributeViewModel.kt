@@ -125,10 +125,13 @@ open class AttributeViewModel  @Inject constructor(
     }
 
     fun onFirstLevelSelected(id: Int) {
-        selectedSecondLevelId.value = null
-        selectedThirdLevelId.value = null
+
         _state.value = _state.value.copy(
-            secondLevelAttributes = _allAttributes.filter { it.parentId == id }
+            secondLevelAttributes = _allAttributes.filter { it.parentId == id },
+            selectedFirstLevelId = _allAttributes.find { it.id == id }?.id,
+            selectedSecondLevelId = null,
+            selectedThirdLevelId = null,
+
 
         )
     }
@@ -136,7 +139,9 @@ open class AttributeViewModel  @Inject constructor(
     fun onSecondLevelSelected(id: Int) {
         selectedThirdLevelId.value = null
         _state.value = _state.value.copy(
-            thirdLevelAttributes = _allAttributes.filter { it.parentId == id }
+            selectedSecondLevelId = _allAttributes.find { it.id == id }?.id,
+            thirdLevelAttributes = _allAttributes.filter { it.parentId == id },
+            selectedThirdLevelId = null,
 
         )
     }

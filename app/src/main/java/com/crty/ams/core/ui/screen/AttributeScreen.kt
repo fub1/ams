@@ -19,8 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.crty.ams.core.data.model.AttributeEntity
-import com.crty.ams.core.ui.component.Attribute.AddAttributeWithCodeSkeleton
-import com.crty.ams.core.ui.component.Attribute.SelectAttributeSkeleton
+import com.crty.ams.core.ui.component.attribute.AddAttributeWithCodeSkeleton
+import com.crty.ams.core.ui.component.attribute.SelectAttributeSkeleton
 import com.crty.ams.core.ui.component.LoadingContainer
 import com.crty.ams.core.ui.viewmodel.AttributeViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +34,7 @@ fun AttributeScreen(
     showSheet: MutableState<Boolean>,
     // onConfirm: () -> Unit,
     // onCancel: () -> Unit,
-    // onBack: () -> Unit,
+    //onBack: () -> Unit,
     viewModel: AttributeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -54,6 +54,7 @@ fun AttributeScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchAllAttributes()
     }
+
 
     LoadingContainer(
         show = state.loading

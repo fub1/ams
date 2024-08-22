@@ -1,4 +1,4 @@
-package com.crty.ams.core.ui.component.Attribute
+package com.crty.ams.core.ui.component.attribute
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -26,35 +26,37 @@ fun SelectAttributeSkeleton(
 
 
     ) {
-    //val selectedFirstLevelId = rememberSaveable { mutableStateOf<Int?>(null) }   // 一级属性id,int或null
-    //val selectedSecondLevelId = rememberSaveable { mutableStateOf<Int?>(null) } // 二级属性id,int或null
-    //val selectedThirdLevelId = rememberSaveable { mutableStateOf<Int?>(null) }  // 三级属性id,int或null
+    val firstLevelSelectedOption = firstLevelAttribute?.find { it.id == firstLevelSelectId.value }?.name ?: ""
+    val secondLevelSelectedOption = secondLevelAttribute?.find { it.id == secondLevelSelectId.value }?.name ?: ""
+    val thirdLevelSelectedOption = thirdLevelAttribute?.find { it.id == thirdLevelSelectId.value }?.name ?: ""
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "正在选择属性 - $attributeType", modifier = Modifier.padding(bottom = 16.dp))
         ExposedDropdownMenu(
             menuTip = "请选择一级$attributeType",
             options = firstLevelAttribute,
-            selectedOption = "",
+            selectedOption = firstLevelSelectedOption,
             onOptionSelected = {
                 firstLevelSelectId.value = it
                 onFirstLevelSelect(it)
             }
         )
-        ExposedDropdownMenu(
-            menuTip = "请选择二级$attributeType",
-            options = secondLevelAttribute,
-            selectedOption = "",
-            onOptionSelected = {
-                secondLevelSelectId.value = it
-                onSecondLevelSelect(it)
-            }
-        )
+        if (firstLevelAttribute != null) {
+            ExposedDropdownMenu(
+                menuTip = "请选择二级$attributeType",
+                options = secondLevelAttribute,
+                selectedOption = secondLevelSelectedOption,
+                onOptionSelected = {
+                    secondLevelSelectId.value = it
+                    onSecondLevelSelect(it)
+                }
+            )
+        }
 
         ExposedDropdownMenu(
             menuTip = "请选择三级$attributeType",
             options = thirdLevelAttribute,
-            selectedOption = "",
+            selectedOption = thirdLevelSelectedOption,
             onOptionSelected = { thirdLevelSelectId.value = it }
         )
 

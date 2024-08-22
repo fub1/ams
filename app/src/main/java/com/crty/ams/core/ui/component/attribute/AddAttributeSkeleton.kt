@@ -1,4 +1,4 @@
-package com.crty.ams.core.ui.component.Attribute
+package com.crty.ams.core.ui.component.attribute
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
