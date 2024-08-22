@@ -1,4 +1,4 @@
-package com.crty.ams.core.ui.screen
+package com.crty.ams.cargo.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,10 +17,10 @@ import com.crty.ams.core.ui.viewmodel.LoginViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContainerScreen(navController: NavHostController, viewModel: LoginViewModel = hiltViewModel()) {
+fun CargoScreen(navController: NavHostController, viewModel: LoginViewModel = hiltViewModel()) {
 
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        Text(text = "器具管理", fontSize = 24.sp, modifier = Modifier.fillMaxWidth())
+        Text(text = "货物管理", fontSize = 24.sp, modifier = Modifier.fillMaxWidth())
     }
 }

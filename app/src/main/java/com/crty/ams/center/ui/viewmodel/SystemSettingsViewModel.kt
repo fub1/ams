@@ -1,4 +1,4 @@
-package com.crty.ams.core.ui.viewmodel
+package com.crty.ams.center.ui.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

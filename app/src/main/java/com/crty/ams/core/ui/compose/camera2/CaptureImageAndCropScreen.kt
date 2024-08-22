@@ -58,6 +58,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.crty.ams.MainActivity
 import com.crty.ams.R
 import com.crty.ams.core.service.ImageUploadService
@@ -79,26 +80,13 @@ fun CaptureImageAndCropScreen(
 ) {
     val context = LocalContext.current
 
+
     // ----------------------------------------------------------------
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    var f: File? = null
 
 
-    val service = ImageUploadService(context)
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            if (uri != null) {
-                (context as? MainActivity)?.lifecycleScope?.launch {
-                    if (f != null) {
-                        service.uploadImage(f!!.getUriForFile(context))
-                    } // 传入Uri对象
-                }
-            }
-        }
-    )
 
     // 创建一个 ActivityResultLauncher，用于拍照
     val cameraLauncher =
@@ -136,12 +124,17 @@ fun CaptureImageAndCropScreen(
         goBack = goBack,
         imagePath = imageUri,
         onChooseImageClicked = {
-            f = context.createImageFile()
-            val newPhotoUri = f!!.getUriForFile(context)
+            viewModel.createImageFile(context)
+            val newPhotoUri = viewModel.getUriForFile(context)
 
             imageUri = newPhotoUri
 
-            cameraLauncher.launch(newPhotoUri)
+            if (newPhotoUri != null) {
+                cameraLauncher.launch(newPhotoUri)
+            }
+        },
+        uploadPic = {
+//            viewModel.launcher
         }
     )
 }
@@ -166,7 +159,8 @@ fun CaptureImageAndCropScreenSkeletonPreviewDark() {
 fun CaptureImageAndCropScreenSkeleton(
     goBack: () -> Unit = {},
     imagePath: Uri? = null,
-    onChooseImageClicked: () -> Unit = {}
+    onChooseImageClicked: () -> Unit = {},
+    uploadPic: () -> Unit = {}
 ) {
     Scaffold(
         Modifier
@@ -222,7 +216,7 @@ fun CaptureImageAndCropScreenSkeleton(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 32.dp),
                 onClick = {
-                    
+                    uploadPic()
                 }
             ) {
                 Text("发请求")

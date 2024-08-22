@@ -28,9 +28,17 @@ package org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcr
 
 import android.content.Context
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import com.crty.ams.MainActivity
+import com.crty.ams.core.service.ImageUploadService
 import com.crty.ams.core.ui.compose.camera2.RealPathUtil
+import com.crty.ams.core.ui.compose.camera2.createImageFile
+import com.crty.ams.core.ui.compose.camera2.getUriForFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
 import javax.inject.Inject
@@ -78,4 +86,27 @@ class CaptureImageAndCropViewModel @Inject constructor() : ViewModel() {
 
         // Here, `imagePart` will be the `image` parameter.
     }
+
+    private var imageFile: File? = null
+
+    fun createImageFile(context: Context) {
+        imageFile = context.createImageFile()
+    }
+
+    fun getUriForFile(context: Context): Uri? {
+        return imageFile?.getUriForFile(context)
+    }
+
+//    val service = ImageUploadService(LocalContext.current)
+//    val launcher = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.GetContent(),
+//        onResult = { uri ->
+//            if (uri != null) {
+//                (LocalContext.current as? MainActivity)?.lifecycleScope?.launch {
+//
+//                    imageFile?.let { service.uploadImage(it.getUriForFile(LocalContext.current)) }
+//                }
+//            }
+//        }
+//    )
 }

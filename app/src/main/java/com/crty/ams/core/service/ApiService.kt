@@ -17,7 +17,7 @@ import java.io.File
 
 interface ApiService {
     @Multipart
-    @POST("upload")
+    @POST()
     suspend fun uploadImage(
         @Part("description") description: RequestBody,
         @Part image: MultipartBody.Part
@@ -26,7 +26,7 @@ interface ApiService {
 
 class ImageUploadService(private val context: Context) {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://your-api-url.com/") // 替换为你的API地址
+        .baseUrl("http://192.168.100.123:5000/") // 替换为你的API地址
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

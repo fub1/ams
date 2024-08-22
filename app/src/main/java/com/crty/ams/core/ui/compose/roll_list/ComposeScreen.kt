@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.crty.ams.core.ui.viewmodel.AssetViewModel
+import com.crty.ams.asset.ui.viewmodel.AssetViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

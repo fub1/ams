@@ -2,10 +2,15 @@ package com.crty.ams.core.ui.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.crty.ams.asset.ui.screen.AssetRegisterScreen
+import com.crty.ams.core.ui.compose.picker.AttributeScreen
+import com.crty.ams.core.ui.compose.picker.AttributeViewModel
 import com.crty.ams.core.ui.compose.roll_list.ComposeScreen
 import com.crty.ams.core.ui.screen.HomeScreen
 import com.crty.ams.core.ui.screen.LoginScreen
@@ -29,7 +34,7 @@ fun AppNavigation(start: RouteList) {
         composable(route = RouteList.Test.description) {
             ComposeScreen(navController)
         }
-        composable(route = RouteList.Picker.description) {
+        composable(route = RouteList.Camera.description) {
             val viewModel: CaptureImageAndCropViewModel = hiltViewModel()
 
             CaptureImageAndCropScreen(
@@ -38,6 +43,17 @@ fun AppNavigation(start: RouteList) {
                     navController.popBackStack()
                 }
             )
+        }
+        composable(route = RouteList.Picker.description) {
+            val showSheet = remember { mutableStateOf(false) }
+            val viewModel: AttributeViewModel = hiltViewModel()
+            AttributeScreen(
+                viewModel = viewModel
+            )
+        }
+
+        composable(route = RouteList.AssetRegister.description) {
+            AssetRegisterScreen(navController)
         }
     }
 }
@@ -50,5 +66,7 @@ enum class RouteList(val description: String) {
     Settings("settings"),
     Home("home"),
     Test("compose"),
-    Picker("picker")
+    Camera("camera"),
+    Picker("picker"),
+    AssetRegister("assetRegister")
 }

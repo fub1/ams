@@ -6,4 +6,5 @@
     <string name="screen_loginScreen_login_button">Click to log in</string>
     <string name="screen_menuScreen_topBar">资产管理</string>
     <string name="str_main_title_home">资产管理</string>
+    <string name="asset_screen_assetRegisterScreen_topBar">资产管理</string>
 </resources>

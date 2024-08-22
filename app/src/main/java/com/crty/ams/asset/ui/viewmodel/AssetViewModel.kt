@@ -1,4 +1,4 @@
-package com.crty.ams.core.ui.viewmodel
+package com.crty.ams.asset.ui.viewmodel
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdUnits

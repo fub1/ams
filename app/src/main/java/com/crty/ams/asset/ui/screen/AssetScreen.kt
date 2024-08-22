@@ -1,7 +1,6 @@
-package com.crty.ams.core.ui.screen
+package com.crty.ams.asset.ui.screen
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,24 +11,18 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.crty.ams.core.ui.viewmodel.AssetViewModel
+import com.crty.ams.asset.ui.viewmodel.AssetViewModel
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import com.crty.ams.core.ui.theme.primaryLight
 import androidx.compose.material3.ButtonDefaults
 
@@ -75,17 +68,22 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
     when (id) {
         1 -> {
             println("Home button clicked")
-            navController.navigate("compose"){
+            navController.navigate("assetRegister"){
                 popUpTo("home") { inclusive = true }
             }
         }
         2 -> {
             println("Favorites button clicked")
+            navController.navigate("camera"){
+                popUpTo("home") { inclusive = true }
+            }
+        }
+        3 -> {
+            println("Settings button clicked")
             navController.navigate("picker"){
                 popUpTo("home") { inclusive = true }
             }
         }
-        3 -> println("Settings button clicked")
         4 -> println("Profile button clicked")
         5 -> println("Messages button clicked")
         6 -> println("Logout button clicked")
