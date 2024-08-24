@@ -6,5 +6,9 @@
     <string name="screen_loginScreen_login_button">Click to log in</string>
     <string name="screen_menuScreen_topBar">资产管理</string>
     <string name="str_main_title_home">资产管理</string>
-    <string name="asset_screen_assetRegisterScreen_topBar">资产管理</string>
+    <string name="asset_screen_assetRegisterScreen_topBar">资产登记</string>
+    <string name="asset_screen_assetCheckScreen_topBar">资产查找</string>
+    <string name="asset_screen_inventoryListScreen_topBar">资产盘点</string>
+    <string name="asset_screen_createInventoryScreen_topBar">创建盘点单</string>
+    <string name="asset_screen_confirmDetailScreen_topBar">确认盘点资产</string>
 </resources>

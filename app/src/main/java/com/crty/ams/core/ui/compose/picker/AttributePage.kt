@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.crty.ams.asset.ui.viewmodel.AssetRegisterViewModel
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,7 +25,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun AttributePage(
     attributeType: String,
     showSheet: MutableState<Boolean>,
-    viewModel: AttributeViewModel = hiltViewModel()
+    viewModel: AttributeViewModel = hiltViewModel(),
+    assetRegisterViewModel: AssetRegisterViewModel = hiltViewModel()
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -73,10 +75,37 @@ fun AttributePage(
                         thirdLevelSelectId = mutableStateOf(state.selectedThirdLevelId),
                         onFirstLevelSelect = { viewModel.onFirstLevelSelected(it) },
                         onSecondLevelSelect = { viewModel.onSecondLevelSelected(it) },
+                        onThirdLevelSelect = { viewModel.onThirdLevelSelected(it) },
                     )
 
                     Button(
-                        onClick = { showSheet.value = false },
+                        onClick = {
+                            showSheet.value = false
+                            println("first: ${state.selectedFirstLevelId}")
+                            println("second: ${state.selectedSecondLevelId}")
+                            println("third: ${state.selectedThirdLevelId}")
+
+                            // 从三级到一级依次判断是否非空，找到第一个非空的就停止判断
+                            when {
+                                state.selectedThirdLevelId != null && state.thirdLevelAttributes != null -> {
+//                                    viewModel.getSelectedInfo(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!)
+                                    viewModel.onAttributeSelected(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!, assetRegisterViewModel, attributeType)
+                                }
+                                state.selectedSecondLevelId != null && state.secondLevelAttributes != null -> {
+//                                    viewModel.getSelectedInfo(state.selectedSecondLevelId!!, state.secondLevelAttributes!!)
+                                    viewModel.onAttributeSelected(state.selectedSecondLevelId!!, state.secondLevelAttributes!!, assetRegisterViewModel, attributeType)
+                                }
+                                state.selectedFirstLevelId != null && state.firstLevelAttributes != null -> {
+//                                    viewModel.getSelectedInfo(state.selectedFirstLevelId!!, state.firstLevelAttributes!!)
+                                    viewModel.onAttributeSelected(state.selectedFirstLevelId!!, state.firstLevelAttributes!!, assetRegisterViewModel, attributeType)
+                                }
+                                else -> null // 如果所有级别都为空，则返回 null
+                            }
+
+
+
+
+                        }
                     ) {
                         Text("确认")
                     }

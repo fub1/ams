@@ -8,6 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.crty.ams.asset.ui.screen.AssetCheckViewModel
 import com.crty.ams.asset.ui.screen.AssetRegisterScreen
 import com.crty.ams.core.ui.compose.picker.AttributeScreen
 import com.crty.ams.core.ui.compose.picker.AttributeViewModel
@@ -15,6 +16,9 @@ import com.crty.ams.core.ui.compose.roll_list.ComposeScreen
 import com.crty.ams.core.ui.screen.HomeScreen
 import com.crty.ams.core.ui.screen.LoginScreen
 import com.crty.ams.core.ui.screen.LoginSettingsScreen
+import com.crty.ams.inventory.ui.screen.ConfirmDetailScreen
+import com.crty.ams.inventory.ui.screen.CreateInventoryScreen
+import com.crty.ams.inventory.ui.screen.InventoryListScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropViewModel
 
@@ -55,6 +59,18 @@ fun AppNavigation(start: RouteList) {
         composable(route = RouteList.AssetRegister.description) {
             AssetRegisterScreen(navController)
         }
+        composable(route = RouteList.AssetCheck.description) {
+            AssetCheckViewModel(navController)
+        }
+        composable(route = RouteList.InventoryList.description) {
+            InventoryListScreen(navController)
+        }
+        composable(route = RouteList.CreateInventory.description) {
+            CreateInventoryScreen(navController)
+        }
+        composable(route = RouteList.ConfirmDetail.description) {
+            ConfirmDetailScreen(navController)
+        }
     }
 }
 
@@ -68,5 +84,9 @@ enum class RouteList(val description: String) {
     Test("compose"),
     Camera("camera"),
     Picker("picker"),
-    AssetRegister("assetRegister")
+    AssetRegister("assetRegister"),
+    AssetCheck("assetCheck"),
+    InventoryList("inventoryList"),
+    CreateInventory("createInventory"),
+    ConfirmDetail("confirmDetail"),
 }

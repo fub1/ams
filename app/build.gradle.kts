@@ -140,6 +140,7 @@ dependencies {
 //    implementation(libs.ucrop) // 照相功能用
 //    implementation(libs.timber) // 照相功能用
     implementation(libs.coil.compose)
+    implementation(libs.lottie.compose)
 
     // Libs Group1: AndroidX.core
     // https://developer.android.com/jetpack/androidx/releases/core

@@ -3,6 +3,7 @@ package com.crty.ams.core.ui.compose.picker
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crty.ams.asset.ui.viewmodel.AssetRegisterViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -130,7 +131,6 @@ open class AttributeViewModel  @Inject constructor(
             selectedSecondLevelId = null,
             selectedThirdLevelId = null,
 
-
         )
     }
 
@@ -142,6 +142,33 @@ open class AttributeViewModel  @Inject constructor(
             selectedThirdLevelId = null,
 
         )
+    }
+
+    fun onThirdLevelSelected(id: Int) {
+        _state.value = _state.value.copy(
+            selectedThirdLevelId = _allAttributes.find { it.id == id }?.id
+            )
+    }
+
+    fun getSelectedInfo(id: Int, list: List<AttributeEntity>): AttributeEntity? {
+        for (attribute in list) {
+            if (attribute.id == id) {
+                return attribute
+            }
+        }
+        return null // 如果没有找到匹配的实体类，则返回 null
+    }
+    fun onAttributeSelected(id: Int, list: List<AttributeEntity>, assetRegisterViewModel: AssetRegisterViewModel, attributeType: String) {
+        val selectedInfo = getSelectedInfo(id, list)
+        selectedInfo?.let { attribute ->
+            // 更新页面 ViewModel 中的输入框值和对应的 ID
+
+            when (attributeType) {
+                "资产分类" -> assetRegisterViewModel.updateAssetCategoryId(attribute.name, attribute.id)
+//                "Attribute Type 2" -> assetRegisterViewModel.updateInput2(attribute.name, attribute.id)
+                else -> println("Invalid day")
+            }
+        }
     }
 
 

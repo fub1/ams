@@ -21,8 +21,7 @@ fun SelectAttributeSkeleton(
     thirdLevelSelectId: MutableState<Int?> = mutableStateOf(null),
     onFirstLevelSelect: (Int) -> Unit = {},
     onSecondLevelSelect: (Int) -> Unit = {},
-
-
+    onThirdLevelSelect: (Int) -> Unit = {}
     ) {
     val firstLevelSelectedOption = firstLevelAttribute?.find { it.id == firstLevelSelectId.value }?.name ?: ""
     val secondLevelSelectedOption = secondLevelAttribute?.find { it.id == secondLevelSelectId.value }?.name ?: ""
@@ -55,7 +54,10 @@ fun SelectAttributeSkeleton(
             menuTip = "请选择三级$attributeType",
             options = thirdLevelAttribute,
             selectedOption = thirdLevelSelectedOption,
-            onOptionSelected = { thirdLevelSelectId.value = it }
+            onOptionSelected = {
+                thirdLevelSelectId.value = it
+                onThirdLevelSelect(it)
+            }
         )
 
     }

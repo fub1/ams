@@ -1,92 +1,135 @@
 package com.crty.ams.asset.ui.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crty.ams.core.data.model.Asset
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AssetRegisterViewModel @Inject constructor(
     // Inject your repository or use case here
 ) : ViewModel() {
-    private val _input1 = MutableStateFlow("")
-    val input1: StateFlow<String> = _input1.asStateFlow()
+//    private val _asset_code = MutableStateFlow("")
+//    val asset_code: StateFlow<String> = _asset_code.asStateFlow()
+//
+//    private val _asset_name = MutableStateFlow("")
+//    val asset_name: StateFlow<String> = _asset_name.asStateFlow()
+//
+//
+//    private val _asset_category = MutableStateFlow("")
+//    val asset_category: StateFlow<String> = _asset_category.asStateFlow()
+//
+//    private val _asset_category_id = MutableStateFlow<Int?>(null)
+//    val asset_category_id: StateFlow<Int?> = _asset_category_id.asStateFlow()
+//
+//    private val _brand = MutableStateFlow("")
+//    val brand: StateFlow<String> = _brand.asStateFlow()
+//
+//    private val _model = MutableStateFlow("")
+//    val model: StateFlow<String> = _model.asStateFlow()
+//
+//    private val _sn = MutableStateFlow("")
+//    val sn: StateFlow<String> = _sn.asStateFlow()
+//
+//    private val _supplier = MutableStateFlow("")
+//    val supplier: StateFlow<String> = _supplier.asStateFlow()
+//
+//    private val _purchase_date = MutableStateFlow("")
+//    val purchase_date: StateFlow<String> = _purchase_date.asStateFlow()
+//
+//    private val _price = MutableStateFlow("")
+//    val price: StateFlow<String> = _price.asStateFlow()
 
-    private val _input2 = MutableStateFlow("")
-    val input2: StateFlow<String> = _input2.asStateFlow()
+    private val _asset = MutableStateFlow(
+        Asset(
+            asset_code = "",
+            asset_name = "",
+            asset_category = "",
+            asset_category_id = null,
+            brand = "",
+            model = "",
+            sn = "",
+            supplier = "",
+            purchase_date = "",
+            price = ""
+        )
+    )
+    val asset: StateFlow<Asset> = _asset.asStateFlow()
 
-    private val _input3 = MutableStateFlow("")
-    val input3: StateFlow<String> = _input3.asStateFlow()
 
-    private val _input4 = MutableStateFlow("")
-    val input4: StateFlow<String> = _input4.asStateFlow()
+    // 控制动画和文字显示的状态
+    val showSuccessPopup = mutableStateOf(false)
 
-    private val _input5 = MutableStateFlow("")
-    val input5: StateFlow<String> = _input5.asStateFlow()
 
-    private val _input6 = MutableStateFlow("")
-    val input6: StateFlow<String> = _input6.asStateFlow()
 
-    private val _input7 = MutableStateFlow("")
-    val input7: StateFlow<String> = _input7.asStateFlow()
-
-    private val _input8 = MutableStateFlow("")
-    val input8: StateFlow<String> = _input8.asStateFlow()
-
-    private val _input9 = MutableStateFlow("")
-    val input9: StateFlow<String> = _input9.asStateFlow()
-
-    // Similarly define input3 to input9...
-
-    // Combine all inputs into a single Flow
-//    val combinedInputs: StateFlow<List<String>> = combine(
-//        _input1, _input2 // Add other inputs here
-//    ) { input1, input2 /* Add other inputs here */ ->
-//        listOf(input1, input2 /* Add other inputs here */)
-//    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
-    fun onInput1Changed(value: String) {
-        _input1.value = value
+    fun onAssetCodeChanged(value: String) {
+        _asset.value = _asset.value.copy(asset_code = value)
     }
 
-    fun onInput2Changed(value: String) {
-        _input2.value = value
+    fun onAssetNameChanged(value: String) {
+        _asset.value = _asset.value.copy(asset_name = value)
     }
 
-    fun onInput3Changed(value: String) {
-        _input3.value = value
+    fun onAssetCategoryChanged(value: String) {
+        _asset.value = _asset.value.copy(asset_category = value)
     }
 
-    fun onInput4Changed(value: String) {
-        _input4.value = value
+    fun onBrandChanged(value: String) {
+        _asset.value = _asset.value.copy(brand = value)
     }
 
-    fun onInput5Changed(value: String) {
-        _input5.value = value
+    fun onModelChanged(value: String) {
+        _asset.value = _asset.value.copy(model = value)
     }
 
-    fun onInput6Changed(value: String) {
-        _input6.value = value
+    fun onSnChanged(value: String) {
+        _asset.value = _asset.value.copy(sn = value)
     }
 
-    fun onInput7Changed(value: String) {
-        _input7.value = value
+    fun onSupplierChanged(value: String) {
+        _asset.value = _asset.value.copy(supplier = value)
     }
 
-    fun onInput8Changed(value: String) {
-        _input8.value = value
+    fun onPurchaseDateChanged(value: String) {
+        _asset.value = _asset.value.copy(purchase_date = value)
     }
 
-    fun onInput9Changed(value: String) {
-        _input9.value = value
+    fun onPriceChanged(value: String) {
+        _asset.value = _asset.value.copy(price = value)
     }
 
 
-    // Similarly define onInput3Changed to onInput9Changed...
+    //将下拉框选项的name和id与文本输入框绑定
+    fun updateAssetCategoryId(name: String, id: Int) {
+        _asset.value = _asset.value.copy(asset_category = name)
+        _asset.value = _asset.value.copy(asset_category_id = id)
+    }
+
+
+    fun submit(){
+        println("资产登记输入值: ${_asset.value.asset_code} ${_asset.value.asset_name} ${_asset.value.asset_category_id} ${_asset.value.brand} ${_asset.value.model} ${_asset.value.sn} ${_asset.value.supplier} ${_asset.value.purchase_date} ${_asset.value.price} ")
+        performOperation()
+
+    }
+    // 模拟执行操作的方法
+    fun performOperation() {
+        viewModelScope.launch {
+            // 显示弹窗
+            showSuccessPopup.value = true
+            // 延迟2秒后隐藏弹窗
+            delay(2000)
+            showSuccessPopup.value = false
+        }
+    }
+
 }

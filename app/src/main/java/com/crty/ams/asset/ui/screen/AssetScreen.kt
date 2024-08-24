@@ -84,8 +84,18 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
                 popUpTo("home") { inclusive = true }
             }
         }
-        4 -> println("Profile button clicked")
-        5 -> println("Messages button clicked")
+        4 -> {
+            println("p button clicked")
+            navController.navigate("assetCheck"){
+                popUpTo("home") { inclusive = true }
+            }
+        }
+        5 -> {
+            println("m button clicked")
+            navController.navigate("inventoryList"){
+                popUpTo("home") { inclusive = true }
+            }
+        }
         6 -> println("Logout button clicked")
         7 -> println("Help button clicked")
         8 -> println("Feedback button clicked")
