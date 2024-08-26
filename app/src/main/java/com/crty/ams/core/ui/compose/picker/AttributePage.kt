@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.crty.ams.asset.ui.viewmodel.AssetRegisterViewModel
+import com.crty.ams.inventory.ui.viewmodel.CreateInventoryViewModel
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,7 +27,8 @@ fun AttributePage(
     attributeType: String,
     showSheet: MutableState<Boolean>,
     viewModel: AttributeViewModel = hiltViewModel(),
-    assetRegisterViewModel: AssetRegisterViewModel = hiltViewModel()
+    assetRegisterViewModel: AssetRegisterViewModel = hiltViewModel(),
+    createInventoryViewModel: CreateInventoryViewModel = hiltViewModel(),
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -89,15 +91,15 @@ fun AttributePage(
                             when {
                                 state.selectedThirdLevelId != null && state.thirdLevelAttributes != null -> {
 //                                    viewModel.getSelectedInfo(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!)
-                                    viewModel.onAttributeSelected(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!, assetRegisterViewModel, attributeType)
+                                    viewModel.onAttributeSelected(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!, attributeType, assetRegisterViewModel, createInventoryViewModel)
                                 }
                                 state.selectedSecondLevelId != null && state.secondLevelAttributes != null -> {
 //                                    viewModel.getSelectedInfo(state.selectedSecondLevelId!!, state.secondLevelAttributes!!)
-                                    viewModel.onAttributeSelected(state.selectedSecondLevelId!!, state.secondLevelAttributes!!, assetRegisterViewModel, attributeType)
+                                    viewModel.onAttributeSelected(state.selectedSecondLevelId!!, state.secondLevelAttributes!!, attributeType, assetRegisterViewModel, createInventoryViewModel)
                                 }
                                 state.selectedFirstLevelId != null && state.firstLevelAttributes != null -> {
 //                                    viewModel.getSelectedInfo(state.selectedFirstLevelId!!, state.firstLevelAttributes!!)
-                                    viewModel.onAttributeSelected(state.selectedFirstLevelId!!, state.firstLevelAttributes!!, assetRegisterViewModel, attributeType)
+                                    viewModel.onAttributeSelected(state.selectedFirstLevelId!!, state.firstLevelAttributes!!, attributeType, assetRegisterViewModel, createInventoryViewModel)
                                 }
                                 else -> null // 如果所有级别都为空，则返回 null
                             }

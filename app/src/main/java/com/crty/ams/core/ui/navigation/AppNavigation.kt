@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.crty.ams.asset.ui.screen.AssetCheckViewModel
 import com.crty.ams.asset.ui.screen.AssetRegisterScreen
+import com.crty.ams.core.ui.compose.multilevel_list.MultilevelListScreen
 import com.crty.ams.core.ui.compose.picker.AttributeScreen
 import com.crty.ams.core.ui.compose.picker.AttributeViewModel
 import com.crty.ams.core.ui.compose.roll_list.ComposeScreen
@@ -71,6 +72,9 @@ fun AppNavigation(start: RouteList) {
         composable(route = RouteList.ConfirmDetail.description) {
             ConfirmDetailScreen(navController)
         }
+        composable(route = RouteList.MultilevelListTest.description) {
+            MultilevelListScreen()
+        }
     }
 }
 
@@ -89,4 +93,5 @@ enum class RouteList(val description: String) {
     InventoryList("inventoryList"),
     CreateInventory("createInventory"),
     ConfirmDetail("confirmDetail"),
+    MultilevelListTest("multilevelListTest")
 }

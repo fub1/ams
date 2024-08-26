@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crty.ams.asset.ui.viewmodel.AssetRegisterViewModel
+import com.crty.ams.inventory.ui.viewmodel.CreateInventoryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -158,14 +159,15 @@ open class AttributeViewModel  @Inject constructor(
         }
         return null // 如果没有找到匹配的实体类，则返回 null
     }
-    fun onAttributeSelected(id: Int, list: List<AttributeEntity>, assetRegisterViewModel: AssetRegisterViewModel, attributeType: String) {
+    fun onAttributeSelected(id: Int, list: List<AttributeEntity>, attributeType: String, assetRegisterViewModel: AssetRegisterViewModel, createInventoryViewModel: CreateInventoryViewModel) {
         val selectedInfo = getSelectedInfo(id, list)
         selectedInfo?.let { attribute ->
             // 更新页面 ViewModel 中的输入框值和对应的 ID
 
             when (attributeType) {
                 "资产分类" -> assetRegisterViewModel.updateAssetCategoryId(attribute.name, attribute.id)
-//                "Attribute Type 2" -> assetRegisterViewModel.updateInput2(attribute.name, attribute.id)
+                "部门" -> createInventoryViewModel.updateTextField1ValueId(attribute.name, attribute.id)
+                "位置" -> createInventoryViewModel.updateTextField2ValueId(attribute.name, attribute.id)
                 else -> println("Invalid day")
             }
         }

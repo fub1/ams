@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,11 +27,23 @@ class CreateInventoryViewModel @Inject constructor(
     private val _textField1Value = MutableStateFlow("")
     val textField1Value: StateFlow<String> = _textField1Value
 
+    private val _textField1Id = MutableStateFlow<Int?>(null)
+    val textField1Id: StateFlow<Int?> = _textField1Id.asStateFlow()
+
+
     private val _textField2Value = MutableStateFlow("")
     val textField2Value: StateFlow<String> = _textField2Value
 
+    private val _textField2Id = MutableStateFlow<Int?>(null)
+    val textField2Id: StateFlow<Int?> = _textField2Id.asStateFlow()
+
+
     private val _textField3Value = MutableStateFlow("")
     val textField3Value: StateFlow<String> = _textField3Value
+
+    private val _textField3Id = MutableStateFlow<Int?>(null)
+    val textField3Id: StateFlow<Int?> = _textField3Id.asStateFlow()
+
 
     // State for enabling/disabling the toggle
     private val _isToggleEnabled = MutableStateFlow(false)
@@ -57,13 +70,25 @@ class CreateInventoryViewModel @Inject constructor(
     fun updateTextField1Value(value: String) {
         _textField1Value.value = value
     }
+    fun updateTextField1ValueId(value: String, id: Int) {
+        _textField1Value.value = value
+        _textField1Id.value = id
+    }
 
     fun updateTextField2Value(value: String) {
         _textField2Value.value = value
     }
+    fun updateTextField2ValueId(value: String, id: Int) {
+        _textField2Value.value = value
+        _textField2Id.value = id
+    }
 
     fun updateTextField3Value(value: String) {
         _textField3Value.value = value
+    }
+    fun updateTextField3ValueId(value: String, id: Int) {
+        _textField3Value.value = value
+        _textField3Id.value = id
     }
 
     fun updateToggleEnabled(isEnabled: Boolean) {

@@ -96,7 +96,12 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
                 popUpTo("home") { inclusive = true }
             }
         }
-        6 -> println("Logout button clicked")
+        6 -> {
+            println("out button clicked")
+            navController.navigate("multilevelListTest"){
+                popUpTo("home") { inclusive = true }
+            }
+        }
         7 -> println("Help button clicked")
         8 -> println("Feedback button clicked")
         9 -> println("About button clicked")

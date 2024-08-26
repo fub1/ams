@@ -1,6 +1,8 @@
 package com.crty.ams.inventory.ui.screen
 
 import android.annotation.SuppressLint
+import android.view.MotionEvent
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,17 +27,23 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.R
+import com.crty.ams.core.ui.compose.picker.AttributePage
+import com.crty.ams.core.ui.compose.single_roller.SingleRollerScreen
+import com.crty.ams.core.ui.compose.single_roller.SingleRollerViewModel
 import com.crty.ams.inventory.ui.viewmodel.CreateInventoryViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun CreateInventoryScreen(navController: NavHostController, viewModel: CreateInventoryViewModel = hiltViewModel()) {
+fun CreateInventoryScreen(navController: NavHostController, viewModel: CreateInventoryViewModel = hiltViewModel(), singleRollerViewModel: SingleRollerViewModel = hiltViewModel()) {
     val topBar = stringResource(R.string.asset_screen_createInventoryScreen_topBar)
 
     // 定义三个状态变量来控制每个文本框是否启用
@@ -50,6 +58,14 @@ fun CreateInventoryScreen(navController: NavHostController, viewModel: CreateInv
     val isToggleEnabled by viewModel.isToggleEnabled.collectAsState()
     val selectedOption by viewModel.selectedOption.collectAsState()
 
+
+    val showSheet = remember { mutableStateOf(false) }
+    val selectedAttributeType = remember { mutableStateOf("") }
+
+    val showSingleRollerSheet = remember { mutableStateOf(false) }
+    val rollerList by singleRollerViewModel.userList.collectAsState()
+
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -99,7 +115,16 @@ fun CreateInventoryScreen(navController: NavHostController, viewModel: CreateInv
                 OutlinedTextField(
                     value = textField1Value,
                     onValueChange = { viewModel.updateTextField1Value(it) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pointerInteropFilter {
+                            if (it.action == MotionEvent.ACTION_DOWN && isTextField1Enabled) {
+                                //点击事件
+                                selectedAttributeType.value = "部门"
+                                showSheet.value = true
+                            }
+                            false
+                        },
                     enabled = isTextField1Enabled,
                     label = { Text("按照部门筛选") }
                 )
@@ -118,7 +143,16 @@ fun CreateInventoryScreen(navController: NavHostController, viewModel: CreateInv
                 OutlinedTextField(
                     value = textField2Value,
                     onValueChange = { viewModel.updateTextField2Value(it) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pointerInteropFilter {
+                            if (it.action == MotionEvent.ACTION_DOWN && isTextField2Enabled) {
+                                //点击事件
+                                selectedAttributeType.value = "位置"
+                                showSheet.value = true
+                            }
+                            false
+                        },
                     enabled = isTextField2Enabled,
                     label = { Text("按照使用位置筛选") }
                 )
@@ -137,7 +171,20 @@ fun CreateInventoryScreen(navController: NavHostController, viewModel: CreateInv
                 OutlinedTextField(
                     value = textField3Value,
                     onValueChange = { viewModel.updateTextField3Value(it) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pointerInteropFilter {
+                            if (isTextField3Enabled) {
+                                if (it.action == MotionEvent.ACTION_DOWN && isTextField1Enabled && textField1Value.isNotEmpty()) {
+                                    //点击事件
+                                    showSingleRollerSheet.value = true
+
+                                }else{
+                                    Toast.makeText(context, "请先选择部门!", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            false
+                        },
                     enabled = isTextField3Enabled,
                     label = { Text("按照使用人筛选") }
                 )
@@ -190,6 +237,24 @@ fun CreateInventoryScreen(navController: NavHostController, viewModel: CreateInv
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("下一步")
+            }
+
+            // Display the ModalBottomSheet
+            if (showSheet.value) {
+                AttributePage(
+                    attributeType = selectedAttributeType.value,
+                    showSheet = showSheet
+                )
+            }
+
+            if (showSingleRollerSheet.value) {
+                SingleRollerScreen(
+                    showSingleRollerSheet,
+                    userList = rollerList,
+                    onConfirm = {
+
+                    }
+                )
             }
         }
     }
