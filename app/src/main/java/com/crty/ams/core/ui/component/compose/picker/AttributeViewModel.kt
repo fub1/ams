@@ -161,24 +161,24 @@ open class AttributeViewModel  @Inject constructor(
         }
         return null // 如果没有找到匹配的实体类，则返回 null
     }
-    fun onAttributeSelected(id: Int, list: List<AttributeEntity>, attributeType: String, assetRegisterViewModel: AssetRegisterViewModel, inventoryDetailFilterViewModel: InventoryDetailFilterViewModel, assetChangeSingleViewModel: AssetChangeSingleViewModel, assetChangeBatchViewModel: AssetChangeBatchViewModel, assetAllocationViewModel: AssetAllocationViewModel) {
-        val selectedInfo = getSelectedInfo(id, list)
-        selectedInfo?.let { attribute ->
-            // 更新页面 ViewModel 中的输入框值和对应的 ID
-
-            when (attributeType) {
-                "资产分类" -> assetRegisterViewModel.updateAssetCategoryId(attribute.name, attribute.id)
-                "部门" -> inventoryDetailFilterViewModel.updateTextField1ValueId(attribute.name, attribute.id)
-                "位置" -> inventoryDetailFilterViewModel.updateTextField2ValueId(attribute.name, attribute.id)
-//                "资产分类变更" -> assetChangeSingleViewModel.updateAssetCategoryId(attribute.name, attribute.id)
-                "批量修改资产分类" -> assetChangeBatchViewModel.updateAttributeValueId(attribute.name, attribute.id)
-                "资产调拨位置" -> assetAllocationViewModel.updateLocationValueId(attribute.name, attribute.id)
-                "资产调拨部门" -> assetAllocationViewModel.updateDepartmentValueId(attribute.name, attribute.id)
-                "资产调拨使用人" -> assetAllocationViewModel.updateUserValueId(attribute.name, attribute.id)
-                else -> println("Invalid day")
-            }
-        }
-    }
+//    fun onAttributeSelected(id: Int, list: List<AttributeEntity>, attributeType: String, assetRegisterViewModel: AssetRegisterViewModel, inventoryDetailFilterViewModel: InventoryDetailFilterViewModel, assetChangeSingleViewModel: AssetChangeSingleViewModel, assetChangeBatchViewModel: AssetChangeBatchViewModel, assetAllocationViewModel: AssetAllocationViewModel) {
+//        val selectedInfo = getSelectedInfo(id, list)
+//        selectedInfo?.let { attribute ->
+//            // 更新页面 ViewModel 中的输入框值和对应的 ID
+//
+//            when (attributeType) {
+//                "资产分类" -> assetRegisterViewModel.updateAssetCategoryId(attribute.name, attribute.id)
+//                "部门" -> inventoryDetailFilterViewModel.updateTextField1ValueId(attribute.name, attribute.id)
+//                "位置" -> inventoryDetailFilterViewModel.updateTextField2ValueId(attribute.name, attribute.id)
+////                "资产分类变更" -> assetChangeSingleViewModel.updateAssetCategoryId(attribute.name, attribute.id)
+//                "批量修改资产分类" -> assetChangeBatchViewModel.updateAttributeValueId(attribute.name, attribute.id)
+//                "资产调拨位置" -> assetAllocationViewModel.updateLocationValueId(attribute.name, attribute.id)
+//                "资产调拨部门" -> assetAllocationViewModel.updateDepartmentValueId(attribute.name, attribute.id)
+//                "资产调拨使用人" -> assetAllocationViewModel.updateUserValueId(attribute.name, attribute.id)
+//                else -> println("Invalid day")
+//            }
+//        }
+//    }
 
 
 

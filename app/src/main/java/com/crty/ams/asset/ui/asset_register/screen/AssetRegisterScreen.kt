@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,7 +63,7 @@ import java.util.Calendar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegisterViewModel = hiltViewModel(), attributeViewModel: AttributeViewModel = hiltViewModel()) {
+fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegisterViewModel = hiltViewModel()) {
     val topBar = stringResource(R.string.asset_screen_assetRegisterScreen_topBar)
 
     val asset by viewModel.asset.collectAsState()
@@ -94,6 +95,19 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
     // State to control the visibility of the ModalBottomSheet
     val showSheet = remember { mutableStateOf(false) }
     val selectedAttributeType = remember { mutableStateOf("") }
+    val selectedData = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("selectedData")?.observeAsState()
+    val selectedInt = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<Int>("selectedInt")?.observeAsState()
+
+    // 当数据返回时更新 ViewModel
+    selectedData?.value?.let { data ->
+        selectedInt?.value?.let { number ->
+            viewModel.updateAssetCategoryId(data, number)
+        }
+    }
 
 
     val calendar = Calendar.getInstance()
@@ -327,7 +341,13 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
             if (showSheet.value) {
                 AttributePage(
                     attributeType = selectedAttributeType.value,
-                    showSheet = showSheet
+                    showSheet = showSheet,
+                    navController,
+                    onDismiss = { data, number ->
+                        // 回传数据给 AssetRegisterScreen 的 ViewModel
+                        viewModel.updateAssetCategoryId(data, number)
+                        showSheet.value = false // 关闭 ModalBottomSheet
+                    }
                 )
             }
             // 显示弹窗

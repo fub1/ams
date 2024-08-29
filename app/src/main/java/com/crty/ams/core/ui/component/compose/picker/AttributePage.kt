@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.crty.ams.asset.ui.asset_allocation.viewmodel.AssetAllocationViewModel
 import com.crty.ams.asset.ui.asset_change_batch.viewmodel.AssetChangeBatchViewModel
 import com.crty.ams.asset.ui.asset_change_single.viewmodel.AssetChangeSingleViewModel
@@ -29,12 +30,14 @@ import com.crty.ams.asset.ui.asset_inventory_detail_filter.viewmodel.InventoryDe
 fun AttributePage(
     attributeType: String,
     showSheet: MutableState<Boolean>,
+    navController: NavHostController,
     viewModel: AttributeViewModel = hiltViewModel(),
-    assetRegisterViewModel: AssetRegisterViewModel = hiltViewModel(),
-    inventoryDetailFilterViewModel: InventoryDetailFilterViewModel = hiltViewModel(),
-    assetChangeSingleViewModel: AssetChangeSingleViewModel = hiltViewModel(),
-    assetChangeBatchViewModel: AssetChangeBatchViewModel = hiltViewModel(),
-    assetAllocationViewModel: AssetAllocationViewModel = hiltViewModel(),
+//    assetRegisterViewModel: AssetRegisterViewModel = hiltViewModel(),
+//    inventoryDetailFilterViewModel: InventoryDetailFilterViewModel = hiltViewModel(),
+//    assetChangeSingleViewModel: AssetChangeSingleViewModel = hiltViewModel(),
+//    assetChangeBatchViewModel: AssetChangeBatchViewModel = hiltViewModel(),
+//    assetAllocationViewModel: AssetAllocationViewModel = hiltViewModel(),
+    onDismiss: (String, Int) -> Unit, // 回调函数，用于返回数据
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -88,7 +91,6 @@ fun AttributePage(
 
                     Button(
                         onClick = {
-                            showSheet.value = false
                             println("first: ${state.selectedFirstLevelId}")
                             println("second: ${state.selectedSecondLevelId}")
                             println("third: ${state.selectedThirdLevelId}")
@@ -97,22 +99,27 @@ fun AttributePage(
                             when {
                                 state.selectedThirdLevelId != null && state.thirdLevelAttributes != null -> {
 //                                    viewModel.getSelectedInfo(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!)
-                                    viewModel.onAttributeSelected(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
+//                                    viewModel.onAttributeSelected(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
+                                    viewModel.getSelectedInfo(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!)
+                                        ?.let { onDismiss(it.name, it.id) }
                                 }
                                 state.selectedSecondLevelId != null && state.secondLevelAttributes != null -> {
 //                                    viewModel.getSelectedInfo(state.selectedSecondLevelId!!, state.secondLevelAttributes!!)
-                                    viewModel.onAttributeSelected(state.selectedSecondLevelId!!, state.secondLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
+//                                    viewModel.onAttributeSelected(state.selectedSecondLevelId!!, state.secondLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
+                                    viewModel.getSelectedInfo(state.selectedSecondLevelId!!, state.secondLevelAttributes!!)
+                                        ?.let { onDismiss(it.name, it.id) }
                                 }
                                 state.selectedFirstLevelId != null && state.firstLevelAttributes != null -> {
 //                                    viewModel.getSelectedInfo(state.selectedFirstLevelId!!, state.firstLevelAttributes!!)
-                                    viewModel.onAttributeSelected(state.selectedFirstLevelId!!, state.firstLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
+//                                    viewModel.onAttributeSelected(state.selectedFirstLevelId!!, state.firstLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
+                                    viewModel.getSelectedInfo(state.selectedFirstLevelId!!, state.firstLevelAttributes!!)
+                                        ?.let { onDismiss(it.name, it.id) }
                                 }
                                 else -> null // 如果所有级别都为空，则返回 null
                             }
 
 
-
-
+                            showSheet.value = false
                         }
                     ) {
                         Text("确认")

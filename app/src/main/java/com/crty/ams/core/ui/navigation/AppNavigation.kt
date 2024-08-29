@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,6 +26,7 @@ import com.crty.ams.core.ui.screen.LoginSettingsScreen
 import com.crty.ams.asset.ui.asset_inventory_detail_confirm.screen.ConfirmDetailScreen
 import com.crty.ams.asset.ui.asset_inventory_detail_filter.screen.InventoryDetailFilterScreen
 import com.crty.ams.asset.ui.asset_inventory_list.screen.InventoryListScreen
+import com.crty.ams.core.ui.compose.picker.AttributePage
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropViewModel
 
@@ -62,9 +64,15 @@ fun AppNavigation(start: RouteList) {
             )
         }
 
+
+
         composable(route = RouteList.AssetRegister.description) {
             AssetRegisterScreen(navController)
         }
+
+
+
+
         composable(route = RouteList.AssetCheck.description) {
             AssetCheckViewModel(navController)
         }
@@ -117,4 +125,6 @@ enum class RouteList(val description: String) {
     AssetChangeSingle("assetChangeSingle"),
     AssetChangeBatch("assetChangeBatch"),
     AssetAllocation("assetAllocation"),
+
+    AttributePage("attributePage/{attributeType}"),/**/
 }

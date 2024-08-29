@@ -278,7 +278,13 @@ fun AssetChangeSingleScreen(navController: NavHostController, viewModel: AssetCh
             if (showSheet.value) {
                 AttributePage(
                     attributeType = selectedAttributeType.value,
-                    showSheet = showSheet
+                    showSheet = showSheet,
+                    navController,
+                    onDismiss = { data, number ->
+                        // 回传数据给 AssetRegisterScreen 的 ViewModel
+                        viewModel.updateAssetCategoryId(data, number)
+                        showSheet.value = false // 关闭 ModalBottomSheet
+                    }
                 )
             }
 

@@ -142,10 +142,11 @@ fun AssetAllocationScreen(navController: NavHostController, viewModel: AssetAllo
 
             // Display the ModalBottomSheet
             if (showSheet.value) {
-                AttributePage(
-                    attributeType = selectedAttributeType.value,
-                    showSheet = showSheet
-                )
+//                AttributePage(
+//                    attributeType = selectedAttributeType.value,
+//                    showSheet = showSheet,
+//                    navController
+//                )
             }
         }
 

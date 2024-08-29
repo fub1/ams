@@ -42,6 +42,9 @@ fun AddAttributeWithCodeSkeleton(
     val selectedFirstLevelId = rememberSaveable{ mutableStateOf<Int?>(null) }   // 一级属性id,int或null
     val selectedSecondLevelId = rememberSaveable{ mutableStateOf<Int?>(null) } // 二级属性id,int或null
 
+    val firstLevelSelectedOption = firstLevelAttribute?.find { it.id == selectedFirstLevelId.value }?.name ?: ""
+    val secondLevelSelectedOption = secondLevelAttribute?.find { it.id == selectedSecondLevelId.value }?.name ?: ""
+
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "正在注册属性 - $attributeType 第${editLevel.intValue}级", modifier = Modifier.padding(bottom = 16.dp))
         // 标题和按钮
@@ -83,7 +86,7 @@ fun AddAttributeWithCodeSkeleton(
                 ExposedDropdownMenu(
                     menuTip = "请选择一级属性",
                     options = firstLevelAttribute,
-                    selectedOption = "",
+                    selectedOption = firstLevelSelectedOption,
                     onOptionSelected = {
                         selectedFirstLevelId.value = it
                     }
@@ -94,7 +97,7 @@ fun AddAttributeWithCodeSkeleton(
                 ExposedDropdownMenu(
                     menuTip = "请选择一级属性",
                     options = firstLevelAttribute,
-                    selectedOption = "",
+                    selectedOption = firstLevelSelectedOption,
                     onOptionSelected = {
                         selectedFirstLevelId.value = it
                     }
@@ -102,7 +105,7 @@ fun AddAttributeWithCodeSkeleton(
                 ExposedDropdownMenu(
                     menuTip = "请选择二级属性",
                     options = secondLevelAttribute!!,
-                    selectedOption = "",
+                    selectedOption = secondLevelSelectedOption,
                     onOptionSelected = {
                         selectedSecondLevelId.value = it
                     }

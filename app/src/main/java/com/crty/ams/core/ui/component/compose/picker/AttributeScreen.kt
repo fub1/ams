@@ -60,13 +60,14 @@ fun AttributeScreen(viewModel: AttributeViewModel = hiltViewModel()) {
         }
 
         // Show the bottom sheet when showSheet.value is true
-            if (showSheet.value) {
-                AttributePage(
-                    attributeType = "asset",
-                    showSheet = showSheet,
-                    viewModel = viewModel
-                )
-            }
+//            if (showSheet.value) {
+//                AttributePage(
+//                    attributeType = "asset",
+//                    showSheet = showSheet,
+//                    viewModel = viewModel,
+//                    navController =
+//                )
+//            }
     }
 }
 
