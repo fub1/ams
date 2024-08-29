@@ -7,6 +7,7 @@ import com.crty.ams.AppParameter
 import com.crty.ams.core.data.network.api.CoreApiService
 import com.crty.ams.core.data.network.model.SystemStampResponse
 import com.crty.ams.core.data.repository.AppParameterRepository
+import com.crty.ams.core.data.repository.CoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginSettingsViewModel @Inject constructor(
     private val appParameterRepository: AppParameterRepository,
-    private val coreApiService: CoreApiService
+    private val coreRepository: CoreRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginSettingsUiState())
@@ -37,7 +38,7 @@ class LoginSettingsViewModel @Inject constructor(
     }
 
     fun onServerPortChanged(newValue: String) {
-        _uiState.value = _uiState.value.copy(serverPort = newValue.toIntOrNull() ?: 8080)
+        _uiState.value = _uiState.value.copy(serverPort = newValue.toIntOrNull())
     }
 
     fun onSaveSettingsClick() {
@@ -45,7 +46,7 @@ class LoginSettingsViewModel @Inject constructor(
             try {
                 val updatedAppParameter = AppParameter.newBuilder()
                     .setBaseUrl(_uiState.value.serverAddress)
-                    .setBasePort(_uiState.value.serverPort)
+                    .setBasePort(_uiState.value.serverPort ?: 8000)
                     .build()
 
                 appParameterRepository.updateAppParameter(updatedAppParameter)
@@ -56,36 +57,26 @@ class LoginSettingsViewModel @Inject constructor(
         }
     }
 
-    suspend fun checkApiStatus(): Result<SystemStampResponse> {
-        return try {
-            val baseUrl = with(_uiState.value) {
-                if (serverAddress.startsWith("http://") || serverAddress.startsWith("https://")) {
-                    "$serverAddress:$serverPort"
-                } else {
-                    "http://$serverAddress:$serverPort"
-                }
+    fun onCheck() {
+        viewModelScope.launch {
+            val result = coreRepository.getSystemStamp()
+            Log.d("LoginSettingsViewModel", "onCheck: $result")
+            result.onSuccess { systemStampResponse ->
+                // Handle successful response
+                val timestamp = systemStampResponse.timestamp
+                // Update UI or perform other actions with the timestamp
+            }.onFailure {exception ->
+                Log.e("LoginSettingsViewModel", "Error checking system stamp", exception)
+                // Handle error
+                // Log the error, display an error message, etc.
             }
-
-            val fullUrl = "$baseUrl/api/sys/stamp"
-            Log.i("LoginSettingsViewModel", "API URL: $fullUrl")
-            val response = coreApiService.getSystemStamp(fullUrl)
-            Log.i("LoginSettingsViewModel", "API Response: ${response.code()}")
-            Log.i("LoginSettingsViewModel", "API Response Body: ${response.body()}")
-
-            if (response.isSuccessful) {
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception("API Error: ${response.code()} - ${response.message()}"))
-            }
-
-        } catch (e: Exception) {
-            Log.e("LoginSettingsViewModel", "API Check Error", e)
-            Result.failure(Exception("Network Error: ${e.message}"))
         }
     }
+
+
 }
 
 data class LoginSettingsUiState(
     val serverAddress: String = "",
-    val serverPort: Int = 8080
+    val serverPort: Int? = null
 )

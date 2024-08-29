@@ -2,6 +2,7 @@ package com.crty.ams.core.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crty.ams.core.data.repository.CoreRepository
 import kotlinx.coroutines.flow.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.TimeoutCancellationException
@@ -12,6 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val coreRepository: CoreRepository
     // Inject your repository or use case here
 ) : ViewModel() {
 
@@ -52,7 +54,11 @@ class LoginViewModel @Inject constructor(
             // viewmodelScope timeout
             try {
                 withTimeout(2000) {
+
+                    coreRepository.login()
+
                     delay(7000)
+
 
                     // Perform validation
                 }

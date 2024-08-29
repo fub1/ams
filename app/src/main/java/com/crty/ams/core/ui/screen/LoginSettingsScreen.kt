@@ -101,17 +101,7 @@ fun LoginSettingsScreen(navController: NavHostController, viewModel: LoginSettin
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                val result = viewModel.checkApiStatus()
-                                apiStatusMessage = if (result.isSuccess) {
-                                    "API Status: OK (Version: ${result.getOrNull()?.version}, Timestamp: ${result.getOrNull()?.timestamp})"
-                                } else {
-                                    "API Status: Error (${result.exceptionOrNull()?.message})"
-                                }
-                                showApiStatus = true
-                            }
-                        },
+                        onClick = {viewModel.onCheck()         },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text("Check")
