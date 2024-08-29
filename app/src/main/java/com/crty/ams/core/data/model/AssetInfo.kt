@@ -1,6 +1,6 @@
 package com.crty.ams.core.data.model
 
-data class Asset(
+data class AssetInfo(
     val asset_code: String,
     val asset_name: String,
     val asset_category: String,

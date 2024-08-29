@@ -33,7 +33,7 @@ import androidx.compose.runtime.setValue
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.crty.ams.asset.ui.screen.AssetScreen
+import com.crty.ams.asset.ui.asset_menu.screen.AssetScreen
 import com.crty.ams.cargo.ui.screen.CargoScreen
 import com.crty.ams.center.ui.screen.SystemSettingsScreen
 import com.crty.ams.container.ui.screen.ContainerScreen

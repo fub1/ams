@@ -5,11 +5,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.crty.ams.asset.ui.screen.AssetCheckViewModel
-import com.crty.ams.asset.ui.screen.AssetRegisterScreen
+import androidx.navigation.navArgument
+import com.crty.ams.asset.ui.asset_allocation.screen.AssetAllocationScreen
+import com.crty.ams.asset.ui.asset_change_batch.screen.AssetChangeBatchScreen
+import com.crty.ams.asset.ui.asset_change_single.screen.AssetChangeSingleScreen
+import com.crty.ams.asset.ui.asset_check.screen.AssetCheckViewModel
+import com.crty.ams.asset.ui.asset_register.screen.AssetRegisterScreen
 import com.crty.ams.core.ui.compose.multilevel_list.MultilevelListScreen
 import com.crty.ams.core.ui.compose.picker.AttributeScreen
 import com.crty.ams.core.ui.compose.picker.AttributeViewModel
@@ -17,9 +22,9 @@ import com.crty.ams.core.ui.compose.roll_list.ComposeScreen
 import com.crty.ams.core.ui.screen.HomeScreen
 import com.crty.ams.core.ui.screen.LoginScreen
 import com.crty.ams.core.ui.screen.LoginSettingsScreen
-import com.crty.ams.inventory.ui.screen.ConfirmDetailScreen
-import com.crty.ams.inventory.ui.screen.CreateInventoryScreen
-import com.crty.ams.inventory.ui.screen.InventoryListScreen
+import com.crty.ams.asset.ui.asset_inventory_detail_confirm.screen.ConfirmDetailScreen
+import com.crty.ams.asset.ui.asset_inventory_detail_filter.screen.InventoryDetailFilterScreen
+import com.crty.ams.asset.ui.asset_inventory_list.screen.InventoryListScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropViewModel
 
@@ -67,13 +72,28 @@ fun AppNavigation(start: RouteList) {
             InventoryListScreen(navController)
         }
         composable(route = RouteList.CreateInventory.description) {
-            CreateInventoryScreen(navController)
+            InventoryDetailFilterScreen(navController)
         }
         composable(route = RouteList.ConfirmDetail.description) {
             ConfirmDetailScreen(navController)
         }
         composable(route = RouteList.MultilevelListTest.description) {
             MultilevelListScreen()
+        }
+        composable(route = RouteList.AssetChangeSingle.description) {
+            AssetChangeSingleScreen(navController)
+        }
+        composable(route = RouteList.AssetChangeBatch.description) {
+            AssetChangeBatchScreen(navController)
+        }
+//        composable(
+//            route = RouteList.AssetChangeBatch.description,
+//            arguments = listOf(navArgument("attribute") { type = NavType.StringType })
+//        ) { backStackEntry ->
+//            AssetChangeBatchScreen(navController)
+//        }
+        composable(route = RouteList.AssetAllocation.description) {
+            AssetAllocationScreen(navController)
         }
     }
 }
@@ -93,5 +113,8 @@ enum class RouteList(val description: String) {
     InventoryList("inventoryList"),
     CreateInventory("createInventory"),
     ConfirmDetail("confirmDetail"),
-    MultilevelListTest("multilevelListTest")
+    MultilevelListTest("multilevelListTest"),
+    AssetChangeSingle("assetChangeSingle"),
+    AssetChangeBatch("assetChangeBatch"),
+    AssetAllocation("assetAllocation"),
 }
