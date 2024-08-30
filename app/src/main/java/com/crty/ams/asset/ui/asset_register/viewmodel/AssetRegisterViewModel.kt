@@ -1,6 +1,8 @@
 package com.crty.ams.asset.ui.asset_register.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crty.ams.core.data.model.AssetInfo
@@ -16,36 +18,11 @@ import javax.inject.Inject
 class AssetRegisterViewModel @Inject constructor(
     // Inject your repository or use case here
 ) : ViewModel() {
-//    private val _asset_code = MutableStateFlow("")
-//    val asset_code: StateFlow<String> = _asset_code.asStateFlow()
-//
-//    private val _asset_name = MutableStateFlow("")
-//    val asset_name: StateFlow<String> = _asset_name.asStateFlow()
-//
-//
-//    private val _asset_category = MutableStateFlow("")
-//    val asset_category: StateFlow<String> = _asset_category.asStateFlow()
-//
-//    private val _asset_category_id = MutableStateFlow<Int?>(null)
-//    val asset_category_id: StateFlow<Int?> = _asset_category_id.asStateFlow()
-//
-//    private val _brand = MutableStateFlow("")
-//    val brand: StateFlow<String> = _brand.asStateFlow()
-//
-//    private val _model = MutableStateFlow("")
-//    val model: StateFlow<String> = _model.asStateFlow()
-//
-//    private val _sn = MutableStateFlow("")
-//    val sn: StateFlow<String> = _sn.asStateFlow()
-//
-//    private val _supplier = MutableStateFlow("")
-//    val supplier: StateFlow<String> = _supplier.asStateFlow()
-//
-//    private val _purchase_date = MutableStateFlow("")
-//    val purchase_date: StateFlow<String> = _purchase_date.asStateFlow()
-//
-//    private val _price = MutableStateFlow("")
-//    val price: StateFlow<String> = _price.asStateFlow()
+    private val _epc = MutableLiveData<String>()
+    val epc: LiveData<String> = _epc
+
+    private val _barcode = MutableLiveData<String>()
+    val barcode: LiveData<String> = _barcode
 
     private val _asset = MutableStateFlow(
         AssetInfo(
@@ -116,6 +93,7 @@ class AssetRegisterViewModel @Inject constructor(
     fun submit(){
         println("资产登记输入值: ${_asset.value.asset_code} ${_asset.value.asset_name} ${_asset.value.asset_category_id} ${_asset.value.brand} ${_asset.value.model} ${_asset.value.sn} ${_asset.value.supplier} ${_asset.value.purchase_date} ${_asset.value.price} ")
         performOperation()
+        println("epc:${_epc.value},barcode:${_barcode.value}")
 
     }
     // 模拟执行操作的方法
@@ -127,6 +105,11 @@ class AssetRegisterViewModel @Inject constructor(
             delay(2000)
             showSuccessPopup.value = false
         }
+    }
+
+    fun setEpcAndBarcode(epc: String, barcode: String){
+        _epc.value = epc
+        _barcode.value = barcode
     }
 
 }

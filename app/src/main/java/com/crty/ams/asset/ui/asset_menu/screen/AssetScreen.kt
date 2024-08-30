@@ -68,7 +68,7 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
     when (id) {
         1 -> {
             println("Home button clicked")
-            navController.navigate("assetRegister"){
+            navController.navigate("assetRegister/111222/qqwwqqww"){
                 popUpTo("home") { inclusive = true }
             }
         }

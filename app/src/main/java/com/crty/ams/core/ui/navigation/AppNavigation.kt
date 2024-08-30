@@ -26,6 +26,7 @@ import com.crty.ams.core.ui.screen.LoginSettingsScreen
 import com.crty.ams.asset.ui.asset_inventory_detail_confirm.screen.ConfirmDetailScreen
 import com.crty.ams.asset.ui.asset_inventory_detail_filter.screen.InventoryDetailFilterScreen
 import com.crty.ams.asset.ui.asset_inventory_list.screen.InventoryListScreen
+import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
 import com.crty.ams.core.ui.compose.picker.AttributePage
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropViewModel
@@ -63,10 +64,20 @@ fun AppNavigation(start: RouteList) {
                 viewModel = viewModel
             )
         }
+        composable(
+            route = RouteList.AssetRegister.description,
+            arguments = listOf(
+                navArgument("epc") { type = NavType.StringType },
+                navArgument("barcode") { type = NavType.StringType }
+            )
+        ) {backStackEntry ->
+            // 获取传递的参数
+            val epc = backStackEntry.arguments?.getString("epc") ?: ""
+            val barcode = backStackEntry.arguments?.getString("barcode") ?: ""
 
-
-
-        composable(route = RouteList.AssetRegister.description) {
+            // 创建 AttributePageViewModel，并传递参数
+            val viewModel: AssetRegisterViewModel = hiltViewModel()
+            viewModel.setEpcAndBarcode(epc, barcode)
             AssetRegisterScreen(navController)
         }
 
@@ -116,7 +127,7 @@ enum class RouteList(val description: String) {
     Test("compose"),
     Camera("camera"),
     Picker("picker"),
-    AssetRegister("assetRegister"),
+    AssetRegister("assetRegister/{epc}/{barcode}"),
     AssetCheck("assetCheck"),
     InventoryList("inventoryList"),
     CreateInventory("createInventory"),
