@@ -2,6 +2,7 @@
 package com.crty.ams.core.data.network.api
 
 
+import com.crty.ams.core.data.network.model.AssetCategoryRequest
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
 import com.crty.ams.core.data.network.model.DepartmentResponse
 import com.crty.ams.core.data.network.model.LocationResponse
@@ -70,11 +71,11 @@ interface CoreApiService {
 
     // 资产分类创建
     @POST
-    suspend fun createAssetCategory(
+    suspend fun submitAssetCategory(
         @Url fullUrl: String,
         @Header("Language") language: Int,
         @Header("Authorization") token: String,
-        @Body assetCategory: AssetCategoryResponse
+        @Body requestBody: AssetCategoryRequest
     ): Response<AssetCategoryResponse>
 
 

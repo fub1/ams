@@ -2,6 +2,7 @@ package com.crty.ams.core.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crty.ams.core.data.network.model.AssetCategory
 import com.crty.ams.core.data.repository.CoreRepository
 import kotlinx.coroutines.flow.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +10,8 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+
+import kotlin.random.Random
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,6 +58,16 @@ class LoginViewModel @Inject constructor(
     fun fetchAssetCategory() {
         viewModelScope.launch {
             coreRepository.getAssetCategory()
+        }
+    }
+
+    fun submitAsset() {
+        viewModelScope.launch {
+            coreRepository.submitAssetCategory(
+                "demoForTest" + Random.nextInt().toString(),
+                "T_"+Random.nextInt().toString(),
+                0
+            )
         }
     }
 

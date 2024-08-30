@@ -149,9 +149,9 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hi
 
                 Button(
                     onClick = {
-                        viewModel.onLoginClick()
+                        viewModel.submitAsset()
                     },
-                    enabled = false,
+                    // enabled = false,
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("建资产类")

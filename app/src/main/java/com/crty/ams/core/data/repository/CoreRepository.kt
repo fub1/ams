@@ -8,6 +8,7 @@ import android.util.Printer
 import com.crty.ams.core.data.datastore.di.AppParameterDataStore
 import com.crty.ams.core.data.network.api.CoreApiService
 import com.crty.ams.core.data.network.model.AssetCategory
+import com.crty.ams.core.data.network.model.AssetCategoryRequest
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
 import com.crty.ams.core.data.network.model.Department
 import com.crty.ams.core.data.network.model.DepartmentResponse
@@ -16,6 +17,7 @@ import com.crty.ams.core.data.network.model.LocationResponse
 import com.crty.ams.core.data.network.model.LoginRequest
 import com.crty.ams.core.data.network.model.LoginResponse
 import com.crty.ams.core.data.network.model.LoginResult
+import com.crty.ams.core.data.network.model.SubmitResponse
 import com.crty.ams.core.data.network.model.SystemStampResponse
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -126,10 +128,8 @@ class CoreRepository @Inject constructor(
         }
     }
 
-
     // DoneTODO 定义接口超时
     // TODO 定义错误处理
-
     suspend fun getLocations(): Result<LocationResponse> {
         val token:String = "bearer "+appParameterRepository.getToken()
         val url:String = appParameterRepository.getBaseUrl()
@@ -176,8 +176,6 @@ class CoreRepository @Inject constructor(
         }
     }
 
-
-
     //  AssetCategoryResponse-取资产分类
     suspend fun getAssetCategory(): Result<AssetCategoryResponse> {
         val token:String = "bearer "+appParameterRepository.getToken()
@@ -218,6 +216,44 @@ class CoreRepository @Inject constructor(
             return Result.success(AssetCategoryResponse(emptyList(), 1, "unknown error"))
         }
     }
+
+    // 创建资产分类
+    suspend fun submitAssetCategory(attrName: String, attrCode: String, arrtParentId: Int): Result<SubmitResponse> {
+    val token: String = "bearer " + appParameterRepository.getToken()
+    val url: String = appParameterRepository.getBaseUrl()
+    val port: Int = appParameterRepository.getBasePort()
+    return try {
+        val fullUrl = "${url}:${port}/api/Basic/asset_category"
+        Log.d("CoreRepository", "creat AssetCategory from: $fullUrl with token: $token")
+        val toSubmitAssetCategory = AssetCategoryRequest(attrCode, attrName, arrtParentId)
+        Log.d("CoreRepository", "creat AssetCategory: ${toSubmitAssetCategory.assetCategoryCode}")
+        val response = coreApiService.submitAssetCategory(fullUrl, 1, token, toSubmitAssetCategory)
+
+        if (response.code() == 401) {
+            Log.d("CoreRepository", "Token expired")
+            return Result.success(SubmitResponse(emptyList(), -1, "Token expired"))
+        } else {
+            val feedbackMsg = response.body()?.message ?: "Unknown error"
+            val assetCategorys: MutableList<AssetCategory> = mutableListOf()
+            response.body()!!.data?.forEach { assetCategory ->
+                assetCategorys.add(assetCategory)
+                Log.d("CoreRepository", "Add-ID${assetCategory.id} Location is ${assetCategory.description}, ")
+            }
+
+            val toResponse = SubmitResponse(
+                data = assetCategorys,
+                code = 0,
+                message = feedbackMsg
+            )
+            Log.d("CoreRepository", "submitAssetCategory: ${toResponse.message} ")
+
+
+            return Result.success(toResponse)
+        }
+    } catch (e: Exception) {
+        return Result.success(SubmitResponse(emptyList(), 1, "unknown error"))
+    }
+}
 
 
 

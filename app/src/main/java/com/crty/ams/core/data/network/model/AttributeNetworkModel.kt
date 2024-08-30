@@ -23,6 +23,23 @@ data class AssetCategoryResponse(
 
 
 
+data class AssetCategoryRequest(
+    @SerializedName("asset_category_code") val assetCategoryCode: String,
+    @SerializedName("asset_category_desc") val assetCategoryDesc: String,
+    @SerializedName("parent_id") val  parentId: Int
+)
+
+// 所有POST-请求的返回值
+data class SubmitResponse(
+    val data: List< Any > ,
+    val code: Int,
+    val message: String
+)
+
+
+
+
+
 
 class Location(
     @SerializedName("location_id") override val id: Int,
