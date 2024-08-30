@@ -20,3 +20,8 @@ data class LoginData(
 data class LoginUser(
     val username: String
 )
+
+data class LoginResult(
+    val code: Int, // 0: success, 1: failure
+    val message: String // message
+)

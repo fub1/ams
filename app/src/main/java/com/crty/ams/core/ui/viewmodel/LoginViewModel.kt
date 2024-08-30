@@ -40,6 +40,30 @@ class LoginViewModel @Inject constructor(
         initialValue = LoginUiState()
     )
 
+    fun fetchdepartment() {
+        viewModelScope.launch {
+            coreRepository.getDepartment()
+        }
+    }
+
+    fun fetchlocations() {
+        viewModelScope.launch {
+            coreRepository.getLocations()
+        }
+    }
+
+    fun fetchAssetCategory() {
+        viewModelScope.launch {
+            coreRepository.getAssetCategory()
+        }
+    }
+
+
+    
+
+
+
+
     fun onUsernameChanged(newUsername: String) {
         _username.value = newUsername
     }
@@ -64,6 +88,9 @@ class LoginViewModel @Inject constructor(
                 }
             } catch (e: TimeoutCancellationException) {
                 _isLoading.value = false
+
+
+                // 用来测试的方法
 
 
 

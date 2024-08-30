@@ -69,7 +69,7 @@ fun AttributeScreen(
                 //选择模式
                 Column {
                     Button(
-                        onClick = { viewModel.toAttributeCreateMode() },
+                        onClick = {},
                     ) {
                         Text("创建${attributeType}")
                     }
@@ -93,7 +93,7 @@ fun AttributeScreen(
                     attributeType = attributeType,
                     firstLevelAttribute = state.firstLevelAttributes,
                     secondLevelAttribute = state.secondLevelAttributes,
-                    goBack = { viewModel.toAttributeSelectMode() },
+                    goBack = { },
                     addAttribute = { attrName, attrCode ->
                         viewModel.addAttribute(attrName, attrCode)
                     }
@@ -101,38 +101,4 @@ fun AttributeScreen(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AttributeScreenPreview() {
-    val showSheet = remember { mutableStateOf(false) }
-    val mockState = AttributeViewModel.AttributeViewState(
-        loading = false,
-        mode = AttributeViewModel.AttributeViewMode.CREATE,
-        firstLevelAttributes = listOf(
-            AttributeEntity(1, 0, "First Level Option 1"),
-            AttributeEntity(2, 0, "First Level Option 2")
-        ),
-        secondLevelAttributes = listOf(
-            AttributeEntity(3, 1, "Second Level Option 1"),
-            AttributeEntity(4, 1, "Second Level Option 2")
-        ),
-        thirdLevelAttributes = listOf(
-            AttributeEntity(5, 3, "Third Level Option 1"),
-            AttributeEntity(6, 3, "Third Level Option 2")
-        )
-    )
-    val mockViewModel = object : AttributeViewModel() {
-        @SuppressLint("UnrememberedMutableState")
-        override val state: StateFlow<AttributeViewState> = MutableStateFlow(mockState)
-    }
-    AttributeScreen(
-        attributeType = "Sample Type",
-        showSheet = showSheet,
-        //onConfirm = {},
-        //onCancel = {},
-        //onBack = {},
-        viewModel = mockViewModel
-    )
 }

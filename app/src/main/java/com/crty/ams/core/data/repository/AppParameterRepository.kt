@@ -23,9 +23,33 @@ class AppParameterRepository @Inject constructor(
         return appParameter?.baseUrl ?: ""
     }
 
+    suspend fun getToken(): String {
+        val appParameter = appParameterDataStore.dataStoreInstance.data.firstOrNull()
+        return appParameter?.token ?: ""
+    }
+
+
+    suspend fun getBasePort(): Int {
+        val appParameter = appParameterDataStore.dataStoreInstance.data.firstOrNull()
+        return appParameter?.basePort ?: 80
+    }
+
+
+
 
     suspend fun updateAppParameter(appParameter: AppParameter) {
         appParameterDataStore.dataStoreInstance.updateData { appParameter }
+    }
+
+    suspend fun updateAppParameterToken(token: String) {
+        val appParameter = appParameterDataStore.dataStoreInstance.data.firstOrNull()
+        appParameter?.let {
+            appParameterDataStore.dataStoreInstance.updateData { current ->
+                current.toBuilder()
+                    .setToken(token)
+                    .build()
+            }
+        }
     }
 
     suspend fun setRandomAppParameter() {

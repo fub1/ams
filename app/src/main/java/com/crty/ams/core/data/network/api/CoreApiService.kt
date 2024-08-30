@@ -1,9 +1,14 @@
 // CoreApiService.kt
 package com.crty.ams.core.data.network.api
 
+
+import com.crty.ams.core.data.network.model.AssetCategoryResponse
+import com.crty.ams.core.data.network.model.DepartmentResponse
+import com.crty.ams.core.data.network.model.LocationResponse
 import com.crty.ams.core.data.network.model.LoginRequest
 import com.crty.ams.core.data.network.model.LoginResponse
 import com.crty.ams.core.data.network.model.SystemStampResponse
+import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,6 +17,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Url
+import java.util.concurrent.TimeUnit
 
 /**
  * Defines the API endpoints for fetching core system data.
@@ -36,6 +42,44 @@ interface CoreApiService {
         @Body loginRequest: LoginRequest
     ): Response<LoginResponse>
 
+    // 部门查询
+    @GET
+    suspend fun getDepartment(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String
+    ): Response<DepartmentResponse>
+
+
+    // 地点查询
+    @GET
+    suspend fun getLocation(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String
+    ): Response<LocationResponse>
+
+    // 资产分类查询
+    //AssetCategoryResponse
+    @GET
+    suspend fun getAssetCategory(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String
+    ): Response<AssetCategoryResponse>
+
+    // 资产分类创建
+    @POST
+    suspend fun createAssetCategory(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String,
+        @Body assetCategory: AssetCategoryResponse
+    ): Response<AssetCategoryResponse>
+
+
+
+
     companion object {
         /**
          * Creates an instance of the [CoreApiService].
@@ -46,9 +90,18 @@ interface CoreApiService {
          * @return An instance of [CoreApiService].
          */
         fun create(): CoreApiService {
+            val okHttpClient = OkHttpClient.Builder()
+                // Set the timeout for the HTTP client
+                // if the request takes longer than 10 seconds, it will be cancelled
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build()
+
             val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("http://localhost/")
+                .client(okHttpClient)
                 .build()
             return retrofit.create(CoreApiService::class.java)
         }

@@ -3,8 +3,10 @@ package com.crty.ams.core.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.crty.ams.core.data.model.AttributeEntity
 import com.crty.ams.core.data.model.Event
+import com.crty.ams.core.data.repository.CoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +18,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 open class AttributeViewModel  @Inject constructor(
-
+    private val coreRepository: CoreRepository
 ) : ViewModel() {
 
     private val eventShowLoading = MutableStateFlow(false)
@@ -82,8 +84,13 @@ open class AttributeViewModel  @Inject constructor(
         }
     }
 
-    fun fetchAllAttributes()
+    suspend fun fetchAllAttributes()
     {
+        viewModelScope.launch {
+            coreRepository.getDepartment()
+        }
+
+
         _allAttributes = listOf(
             AttributeEntity(1, 0,"First Level Option 1"),
             AttributeEntity(2, 0,"First Level Option 2"),
@@ -102,8 +109,11 @@ open class AttributeViewModel  @Inject constructor(
         )
     }
 
-    fun toAttributeCreateMode() {
-        fetchAllAttributes()
+    suspend fun toAttributeCreateMode() {
+        viewModelScope.launch {
+            fetchAllAttributes()
+        }
+
         _state.value = _state.value.copy(
             mode = AttributeViewMode.CREATE,
             secondLevelAttributes = emptyList(),
@@ -111,8 +121,10 @@ open class AttributeViewModel  @Inject constructor(
         )
     }
 
-    fun toAttributeSelectMode() {
-        fetchAllAttributes()
+    suspend fun toAttributeSelectMode() {
+        viewModelScope.launch {
+            fetchAllAttributes()
+        }
         _state.value = _state.value.copy(
             mode = AttributeViewMode.SELECT,
             secondLevelAttributes = emptyList(),
@@ -145,6 +157,8 @@ open class AttributeViewModel  @Inject constructor(
 
         )
     }
+
+
 
 
 
