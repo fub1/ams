@@ -3,6 +3,7 @@ package com.crty.ams.core.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crty.ams.core.data.network.model.AssetCategory
+import com.crty.ams.core.data.network.model.AssetRegistrationRequest
 import com.crty.ams.core.data.repository.CoreRepository
 import kotlinx.coroutines.flow.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,6 +69,26 @@ class LoginViewModel @Inject constructor(
                 "T_"+Random.nextInt().toString(),
                 0
             )
+        }
+    }
+
+    fun submitAssetRegister() {
+        val toRequest = AssetRegistrationRequest(
+            assetCode = "Asset-demoCode" + Random.nextInt().toString(),
+            assetName = "Asset-demoName" + Random.nextInt().toString(),
+            assetCategoryId = 5,
+            brand = "小米",
+            model = "X13",
+            sn = Random.nextInt().toString(),
+            supplier = "小米",
+            purchaseDate = "2024-09-01",
+            price = 100.0,
+            remark = "测试",
+            rfidCodeTid = "E2801" + Random.nextInt().toString(),
+            rfidCodeEpc = "E2801" + Random.nextInt().toString(),
+            barcode = null)
+        viewModelScope.launch {
+            coreRepository.submitAssetRegistration(toRequest)
         }
     }
 

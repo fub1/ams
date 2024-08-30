@@ -31,9 +31,26 @@ data class AssetCategoryRequest(
 
 // 所有POST-请求的返回值
 data class SubmitResponse(
-    val data: List< Any > ,
+    val data: Any ,
     val code: Int,
     val message: String
+)
+
+// 资产登记请求
+data class AssetRegistrationRequest(
+    @SerializedName("asset_code") val assetCode: String,
+    @SerializedName("asset_name") val assetName: String,
+    @SerializedName("asset_category_id") val assetCategoryId: Int,
+    @SerializedName("brand") val brand: String,
+    @SerializedName("model") val model: String,
+    @SerializedName("sn") val sn: String? = null,
+    @SerializedName("supplier") val supplier: String? = null,
+    @SerializedName("purchase_date") val purchaseDate: String? = null,
+    @SerializedName("price") val price: Double? = null,
+    @SerializedName("remark") val remark: String? = null,
+    @SerializedName("rfid_code_tid") val rfidCodeTid: String? = null,
+    @SerializedName("rfid_code_epc") val rfidCodeEpc: String,
+    @SerializedName("barcode") val barcode: String? = null
 )
 
 

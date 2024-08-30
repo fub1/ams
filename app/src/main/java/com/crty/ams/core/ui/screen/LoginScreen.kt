@@ -169,6 +169,39 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hi
 
             }
 
+            Row {
+                Button(
+                    onClick = {
+                        viewModel.submitAssetRegister()
+                    },
+                    //enabled = false,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("资产REG")
+                }
+
+                Button(
+                    onClick = {
+                        viewModel.submitAsset()
+                    },
+                    enabled = false,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("资产查询")
+                }
+
+                Button(
+                    enabled = false,
+                    onClick = {
+                        viewModel.fetchdepartment()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("资产绑定")
+                }
+
+            }
+
 
 
         }

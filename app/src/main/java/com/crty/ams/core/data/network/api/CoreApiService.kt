@@ -4,10 +4,12 @@ package com.crty.ams.core.data.network.api
 
 import com.crty.ams.core.data.network.model.AssetCategoryRequest
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
+import com.crty.ams.core.data.network.model.AssetRegistrationRequest
 import com.crty.ams.core.data.network.model.DepartmentResponse
 import com.crty.ams.core.data.network.model.LocationResponse
 import com.crty.ams.core.data.network.model.LoginRequest
 import com.crty.ams.core.data.network.model.LoginResponse
+import com.crty.ams.core.data.network.model.SubmitResponse
 import com.crty.ams.core.data.network.model.SystemStampResponse
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -77,6 +79,15 @@ interface CoreApiService {
         @Header("Authorization") token: String,
         @Body requestBody: AssetCategoryRequest
     ): Response<AssetCategoryResponse>
+
+    // 资产等级
+    @POST
+    suspend fun submitRegAsset(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String,
+        @Body requestBody: AssetRegistrationRequest
+    ): Response<SubmitResponse>
 
 
 

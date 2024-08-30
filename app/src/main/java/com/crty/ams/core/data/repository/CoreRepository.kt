@@ -10,6 +10,7 @@ import com.crty.ams.core.data.network.api.CoreApiService
 import com.crty.ams.core.data.network.model.AssetCategory
 import com.crty.ams.core.data.network.model.AssetCategoryRequest
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
+import com.crty.ams.core.data.network.model.AssetRegistrationRequest
 import com.crty.ams.core.data.network.model.Department
 import com.crty.ams.core.data.network.model.DepartmentResponse
 import com.crty.ams.core.data.network.model.Location
@@ -29,8 +30,8 @@ class CoreRepository @Inject constructor(
     //TODO 服务器不可达异常处理
     suspend fun getSystemStamp(): Result<SystemStampResponse> {
 
-        val url:String = appParameterRepository.getBaseUrl()
-        val port:Int = appParameterRepository.getBasePort()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
         return try {
             val fullUrl = "${url}:${port}/api/login/Stamp"
             Log.d("CoreRepository", "Fetching system stamp from: $fullUrl")
@@ -48,14 +49,15 @@ class CoreRepository @Inject constructor(
     // TODO 接受登录参数
 
     suspend fun login(): Result<LoginResult> {
-        val url:String = appParameterRepository.getBaseUrl()
-        val port:Int = appParameterRepository.getBasePort()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
         return try {
             // 完整URL
             val fullUrl = "${url}:${port}/api/login"
             Log.d("CoreRepository", "Fetching system stamp from: $fullUrl")
             // 执行请求
-            val response = coreApiService.login(fullUrl, 1, LoginRequest("admin", "123456", "UM5230301811"))
+            val response =
+                coreApiService.login(fullUrl, 1, LoginRequest("admin", "123456", "UM5230301811"))
             Log.d("CoreRepository", "Response code: ${response.code()}")
             Log.d("CoreRepository", "Response code: ${response.body()?.code}")
             if (response.body()?.code == 0) {
@@ -83,9 +85,9 @@ class CoreRepository @Inject constructor(
 
 
     suspend fun getDepartment(): Result<DepartmentResponse> {
-        val token:String = "bearer "+appParameterRepository.getToken()
-        val url:String = appParameterRepository.getBaseUrl()
-        val port:Int = appParameterRepository.getBasePort()
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
         return try {
             val fullUrl = "${url}:${port}/api/Basic/department"
             Log.d("CoreRepository", "Fetching department from: $fullUrl with token: $token")
@@ -106,7 +108,10 @@ class CoreRepository @Inject constructor(
                 val departments: MutableList<Department> = mutableListOf()
                 response.body()!!.data?.forEach { department ->
                     departments.add(department)
-                    Log.d("CoreRepository", "Add-ID${department.id} Department is ${department.description}, ")
+                    Log.d(
+                        "CoreRepository",
+                        "Add-ID${department.id} Department is ${department.description}, "
+                    )
                 }
 
                 val departmentResponse = DepartmentResponse(
@@ -131,9 +136,9 @@ class CoreRepository @Inject constructor(
     // DoneTODO 定义接口超时
     // TODO 定义错误处理
     suspend fun getLocations(): Result<LocationResponse> {
-        val token:String = "bearer "+appParameterRepository.getToken()
-        val url:String = appParameterRepository.getBaseUrl()
-        val port:Int = appParameterRepository.getBasePort()
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
         return try {
             val fullUrl = "${url}:${port}/api/Basic/location"
             Log.d("CoreRepository", "Fetching location from: $fullUrl with token: $token")
@@ -154,7 +159,10 @@ class CoreRepository @Inject constructor(
                 val locations: MutableList<Location> = mutableListOf()
                 response.body()!!.data?.forEach { location ->
                     locations.add(location)
-                    Log.d("CoreRepository", "Add-ID${location.id} Location is ${location.description}, ")
+                    Log.d(
+                        "CoreRepository",
+                        "Add-ID${location.id} Location is ${location.description}, "
+                    )
                 }
 
                 val locationResponse = LocationResponse(
@@ -178,9 +186,9 @@ class CoreRepository @Inject constructor(
 
     //  AssetCategoryResponse-取资产分类
     suspend fun getAssetCategory(): Result<AssetCategoryResponse> {
-        val token:String = "bearer "+appParameterRepository.getToken()
-        val url:String = appParameterRepository.getBaseUrl()
-        val port:Int = appParameterRepository.getBasePort()
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
         return try {
             val fullUrl = "${url}:${port}/api/Basic/asset_category"
             Log.d("CoreRepository", "Fetching asset_category from: $fullUrl with token: $token")
@@ -197,7 +205,10 @@ class CoreRepository @Inject constructor(
                 val assetCategorys: MutableList<AssetCategory> = mutableListOf()
                 response.body()!!.data?.forEach { assetCategory ->
                     assetCategorys.add(assetCategory)
-                    Log.d("CoreRepository", "Add-ID${assetCategory.id} Location is ${assetCategory.description}, ")
+                    Log.d(
+                        "CoreRepository",
+                        "Add-ID${assetCategory.id} Location is ${assetCategory.description}, "
+                    )
                 }
 
                 val toResponse = AssetCategoryResponse(
@@ -218,44 +229,98 @@ class CoreRepository @Inject constructor(
     }
 
     // 创建资产分类
-    suspend fun submitAssetCategory(attrName: String, attrCode: String, arrtParentId: Int): Result<SubmitResponse> {
-    val token: String = "bearer " + appParameterRepository.getToken()
-    val url: String = appParameterRepository.getBaseUrl()
-    val port: Int = appParameterRepository.getBasePort()
-    return try {
-        val fullUrl = "${url}:${port}/api/Basic/asset_category"
-        Log.d("CoreRepository", "creat AssetCategory from: $fullUrl with token: $token")
-        val toSubmitAssetCategory = AssetCategoryRequest(attrCode, attrName, arrtParentId)
-        Log.d("CoreRepository", "creat AssetCategory: ${toSubmitAssetCategory.assetCategoryCode}")
-        val response = coreApiService.submitAssetCategory(fullUrl, 1, token, toSubmitAssetCategory)
-
-        if (response.code() == 401) {
-            Log.d("CoreRepository", "Token expired")
-            return Result.success(SubmitResponse(emptyList(), -1, "Token expired"))
-        } else {
-            val feedbackMsg = response.body()?.message ?: "Unknown error"
-            val assetCategorys: MutableList<AssetCategory> = mutableListOf()
-            response.body()!!.data?.forEach { assetCategory ->
-                assetCategorys.add(assetCategory)
-                Log.d("CoreRepository", "Add-ID${assetCategory.id} Location is ${assetCategory.description}, ")
-            }
-
-            val toResponse = SubmitResponse(
-                data = assetCategorys,
-                code = 0,
-                message = feedbackMsg
+    suspend fun submitAssetCategory(
+        attrName: String,
+        attrCode: String,
+        arrtParentId: Int
+    ): Result<SubmitResponse> {
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
+        return try {
+            val fullUrl = "${url}:${port}/api/Basic/asset_category"
+            Log.d("CoreRepository", "creat AssetCategory from: $fullUrl with token: $token")
+            val toSubmitAssetCategory = AssetCategoryRequest(attrCode, attrName, arrtParentId)
+            Log.d(
+                "CoreRepository",
+                "creat AssetCategory: ${toSubmitAssetCategory.assetCategoryCode}"
             )
-            Log.d("CoreRepository", "submitAssetCategory: ${toResponse.message} ")
+            val response =
+                coreApiService.submitAssetCategory(fullUrl, 1, token, toSubmitAssetCategory)
+
+            if (response.code() == 401) {
+                Log.d("CoreRepository", "Token expired")
+                return Result.success(SubmitResponse("", -1, "Token expired"))
+            } else {
+                val feedbackMsg = response.body()?.message ?: "Unknown error"
+                val assetCategorys: MutableList<AssetCategory> = mutableListOf()
+                response.body()!!.data?.forEach { assetCategory ->
+                    assetCategorys.add(assetCategory)
+                    Log.d(
+                        "CoreRepository",
+                        "Add-ID${assetCategory.id} Location is ${assetCategory.description}, "
+                    )
+                }
+
+                val toResponse = SubmitResponse(
+                    data = assetCategorys,
+                    code = 0,
+                    message = feedbackMsg
+                )
+                Log.d("CoreRepository", "submitAssetCategory: ${toResponse.message} ")
 
 
-            return Result.success(toResponse)
+                return Result.success(toResponse)
+            }
+        } catch (e: Exception) {
+            return Result.success(SubmitResponse("", 1, "unknown error"))
         }
-    } catch (e: Exception) {
-        return Result.success(SubmitResponse(emptyList(), 1, "unknown error"))
+    }
+
+
+    // 资产等级
+    suspend fun submitAssetRegistration(
+        assetRegistrationRequest: AssetRegistrationRequest
+    ): Result<SubmitResponse> {
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
+        return try {
+            val fullUrl = "${url}:${port}/api/AssetBusiness/asset"
+            Log.d("CoreRepository-RA", "Registration Asset from: $fullUrl with token: $token")
+            Log.d(
+                "CoreRepository", "TO Reg Asset: " +
+                        assetRegistrationRequest.assetName + " " +
+                        assetRegistrationRequest.assetCode + " " +
+                        assetRegistrationRequest.rfidCodeEpc + " " +
+                        assetRegistrationRequest.barcode
+            )
+            val response =
+                coreApiService.submitRegAsset(fullUrl, 1, token, assetRegistrationRequest)
+            Log.d("CoreRepository", "Response code: ${response.body()?.code}")
+
+            if (response.code() == 401) {
+                Log.d("CoreRepository", "Token expired")
+                return Result.success(SubmitResponse("", -1, "Token expired"))
+            } else {
+                if (response.isSuccessful) {
+                    val toResponse = SubmitResponse(
+                        data = response.body()?.data.toString(),
+                        code = response.body()?.code ?: 1,
+                        message = response.body()?.message ?: "Unknown error"
+                    )
+
+                    Log.d("CoreRepository", "submitAssetRegistration: ${toResponse.code} ")
+
+                    return Result.success(toResponse)
+                } else {
+                    return Result.success(SubmitResponse("", 1, "unknown error"))
+                }
+            }
+        } catch (e: Exception) {
+            return Result.success(SubmitResponse("", 1, "unknown error"))
+        }
     }
 }
 
 
-
-
-}
