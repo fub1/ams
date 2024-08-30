@@ -10,5 +10,6 @@ data class AssetInfo(
     val sn: String,
     val supplier: String,
     val purchase_date: String,
-    val price: String
+    val price: String,
+    val remark: String
 )

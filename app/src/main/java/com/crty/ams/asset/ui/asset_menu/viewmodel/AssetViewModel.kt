@@ -39,7 +39,7 @@ class AssetViewModel @Inject constructor(
         MenuItem(7, "单个变更页面", Icons.Filled.Anchor),
         MenuItem(8, "批量变更页面", Icons.Filled.Bathroom),
         MenuItem(9, "资产调拨", Icons.Filled.BlurLinear),
-        MenuItem(10, "标签绑定", Icons.Filled.DateRange),
+        MenuItem(10, "资产解绑（主从）", Icons.Filled.DateRange),
         MenuItem(11, "标签解绑", Icons.Filled.YoutubeSearchedFor),
         MenuItem(12, "资产报废", Icons.Filled.OilBarrel)
     )

@@ -5,17 +5,20 @@ import android.app.DatePickerDialog
 import android.view.MotionEvent
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -40,8 +43,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -55,6 +60,8 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.crty.ams.R
 import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
+import com.crty.ams.asset.ui.asset_unbinding_ms.viewmodel.AssetUnbindingViewModel
+import com.crty.ams.core.ui.compose.camera2.rememberImagePainter
 import com.crty.ams.core.ui.compose.picker.AttributePage
 import com.crty.ams.core.ui.compose.picker.AttributeViewModel
 import com.crty.ams.core.ui.theme.AmsTheme
@@ -63,7 +70,7 @@ import java.util.Calendar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegisterViewModel = hiltViewModel()) {
+fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegisterViewModel) {
     val topBar = stringResource(R.string.asset_screen_assetRegisterScreen_topBar)
 
     val asset by viewModel.asset.collectAsState()
@@ -76,6 +83,7 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
     val supplier = asset.supplier
     val purchaseDate = asset.purchase_date
     val price = asset.price
+    val remark = asset.remark
     // Collect other inputs similarly...
 
     var codeError by remember { mutableStateOf(false) }
@@ -95,19 +103,19 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
     // State to control the visibility of the ModalBottomSheet
     val showSheet = remember { mutableStateOf(false) }
     val selectedAttributeType = remember { mutableStateOf("") }
-    val selectedData = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.getLiveData<String>("selectedData")?.observeAsState()
-    val selectedInt = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.getLiveData<Int>("selectedInt")?.observeAsState()
-
-    // 当数据返回时更新 ViewModel
-    selectedData?.value?.let { data ->
-        selectedInt?.value?.let { number ->
-            viewModel.updateAssetCategoryId(data, number)
-        }
-    }
+//    val selectedData = navController.currentBackStackEntry
+//        ?.savedStateHandle
+//        ?.getLiveData<String>("selectedData")?.observeAsState()
+//    val selectedInt = navController.currentBackStackEntry
+//        ?.savedStateHandle
+//        ?.getLiveData<Int>("selectedInt")?.observeAsState()
+//
+//    // 当数据返回时更新 ViewModel
+//    selectedData?.value?.let { data ->
+//        selectedInt?.value?.let { number ->
+//            viewModel.updateAssetCategoryId(data, number)
+//        }
+//    }
 
 
     val calendar = Calendar.getInstance()
@@ -331,9 +339,34 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
                 onValueChange = { viewModel.onPriceChanged(it) },
                 onClick = {
                     // Handle click event here
-                    Toast.makeText(context, "Input 9 clicked", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "Input 9 clicked", Toast.LENGTH_SHORT).show()
                 },
                 false
+            )
+            TextFieldWithLabel(
+                text = "备注",
+                label = "请输入备注",
+                value = remark,
+                onValueChange = { viewModel.onRemarkChanged(it) },
+                onClick = {
+                    // Handle click event here
+//                    Toast.makeText(context, "Input 10 clicked", Toast.LENGTH_SHORT).show()
+                },
+                false
+            )
+
+            Image(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(start = 32.dp, top = 32.dp, end = 32.dp)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(16.dp)),
+                painter = rememberImagePainter(
+                    data = null,
+                    placeholder = R.drawable.default_placeholder
+                ),
+                contentDescription = "Image",
+                contentScale = ContentScale.Crop
             )
 
 

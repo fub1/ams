@@ -33,7 +33,8 @@ class AssetChangeSingleViewModel @Inject constructor(
             sn = "",
             supplier = "",
             purchase_date = "",
-            price = ""
+            price = "",
+            remark = ""
         )
     )
     val asset: StateFlow<AssetInfo> = _asset.asStateFlow()
@@ -53,7 +54,7 @@ class AssetChangeSingleViewModel @Inject constructor(
 //        _asset.value = _asset.value.copy(supplier = "supplier")
 //        _asset.value = _asset.value.copy(purchase_date = "pur")
 //        _asset.value = _asset.value.copy(price = "price")
-        _asset.value = AssetInfo("code", "name", "category", 1, "brand", "model", "sn", "supplier", "pur", "price")
+        _asset.value = AssetInfo("code", "name", "category", 1, "brand", "model", "sn", "supplier", "pur", "price", "remark")
     }
 
     fun updateAssetField(field: (AssetInfo) -> AssetInfo) {
@@ -68,7 +69,7 @@ class AssetChangeSingleViewModel @Inject constructor(
 
 
     fun submit(){
-        println("资产变更输入值: ${_asset.value.asset_code} ${_asset.value.asset_name} ${_asset.value.asset_category_id} ${_asset.value.brand} ${_asset.value.model} ${_asset.value.sn} ${_asset.value.supplier} ${_asset.value.purchase_date} ${_asset.value.price} ")
+        println("资产变更输入值: ${_asset.value.asset_code} ${_asset.value.asset_name} ${_asset.value.asset_category_id} ${_asset.value.brand} ${_asset.value.model} ${_asset.value.sn} ${_asset.value.supplier} ${_asset.value.purchase_date} ${_asset.value.price} ${_asset.value.remark} ")
         performOperation()
 
     }

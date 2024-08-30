@@ -74,6 +74,7 @@ fun AssetChangeSingleScreen(navController: NavHostController, viewModel: AssetCh
     val supplier = asset.supplier
     val purchaseDate = asset.purchase_date
     val price = asset.price
+    val remark = asset.remark
 
     // Get the context here
     val context = LocalContext.current
@@ -263,6 +264,20 @@ fun AssetChangeSingleScreen(navController: NavHostController, viewModel: AssetCh
                 value = price,
                 onValueChange = { newCode ->
                     viewModel.updateAssetField { it.copy(price = newCode) }
+                },
+                onClick = {
+                    // Handle click event here
+
+                },
+                false,
+                enable = true
+            )
+            TextFieldWithLabel(
+                text = "备注",
+                label = "请输入备注",
+                value = remark,
+                onValueChange = { newCode ->
+                    viewModel.updateAssetField { it.copy(remark = newCode) }
                 },
                 onClick = {
                     // Handle click event here

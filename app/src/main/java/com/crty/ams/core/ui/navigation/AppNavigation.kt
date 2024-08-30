@@ -27,6 +27,8 @@ import com.crty.ams.asset.ui.asset_inventory_detail_confirm.screen.ConfirmDetail
 import com.crty.ams.asset.ui.asset_inventory_detail_filter.screen.InventoryDetailFilterScreen
 import com.crty.ams.asset.ui.asset_inventory_list.screen.InventoryListScreen
 import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
+import com.crty.ams.asset.ui.asset_unbinding_ms.screen.AssetUnbindingScreen
+import com.crty.ams.asset.ui.asset_unbinding_ms.viewmodel.AssetUnbindingViewModel
 import com.crty.ams.core.ui.compose.picker.AttributePage
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropViewModel
@@ -78,11 +80,8 @@ fun AppNavigation(start: RouteList) {
             // 创建 AttributePageViewModel，并传递参数
             val viewModel: AssetRegisterViewModel = hiltViewModel()
             viewModel.setEpcAndBarcode(epc, barcode)
-            AssetRegisterScreen(navController)
+            AssetRegisterScreen(navController, viewModel)
         }
-
-
-
 
         composable(route = RouteList.AssetCheck.description) {
             AssetCheckViewModel(navController)
@@ -105,14 +104,22 @@ fun AppNavigation(start: RouteList) {
         composable(route = RouteList.AssetChangeBatch.description) {
             AssetChangeBatchScreen(navController)
         }
-//        composable(
-//            route = RouteList.AssetChangeBatch.description,
-//            arguments = listOf(navArgument("attribute") { type = NavType.StringType })
-//        ) { backStackEntry ->
-//            AssetChangeBatchScreen(navController)
-//        }
         composable(route = RouteList.AssetAllocation.description) {
             AssetAllocationScreen(navController)
+        }
+        composable(
+            route = RouteList.AssetUnbindingMS.description,
+            arguments = listOf(
+                navArgument("assetId") { type = NavType.IntType }
+            )
+        ) {backStackEntry ->
+            // 获取传递的参数
+            val assetId = backStackEntry.arguments?.getInt("assetId") ?: 0
+
+            // 创建 AttributePageViewModel，并传递参数
+            val viewModel: AssetUnbindingViewModel = hiltViewModel()
+            viewModel.setAssetId(assetId)
+            AssetUnbindingScreen(navController, viewModel)
         }
     }
 }
@@ -136,6 +143,5 @@ enum class RouteList(val description: String) {
     AssetChangeSingle("assetChangeSingle"),
     AssetChangeBatch("assetChangeBatch"),
     AssetAllocation("assetAllocation"),
-
-    AttributePage("attributePage/{attributeType}"),/**/
+    AssetUnbindingMS("assetUnbindingMS/{assetId}"),/*主从资产解绑*/
 }

@@ -117,6 +117,11 @@ fun AssetCheckViewModel(navController: NavHostController, viewModel: AssetCheckV
                 label = "请输入价格",
                 value = asset.price
             )
+            TextFieldWithLabel(
+                text = "备注",
+                label = "请输入备注",
+                value = asset.remark
+            )
         }
     }
 }

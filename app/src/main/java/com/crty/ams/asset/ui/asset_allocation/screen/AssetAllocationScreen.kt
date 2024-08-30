@@ -142,11 +142,28 @@ fun AssetAllocationScreen(navController: NavHostController, viewModel: AssetAllo
 
             // Display the ModalBottomSheet
             if (showSheet.value) {
-//                AttributePage(
-//                    attributeType = selectedAttributeType.value,
-//                    showSheet = showSheet,
-//                    navController
-//                )
+                AttributePage(
+                    attributeType = selectedAttributeType.value,
+                    showSheet = showSheet,
+                    navController,
+                    onDismiss = { data, number ->
+                        // 回传数据给 AssetRegisterScreen 的 ViewModel
+                        when(selectedAttributeType.value){
+                            "资产调拨位置" -> {
+                                viewModel.updateLocationValueId(data, number)
+                                showSheet.value = false // 关闭 ModalBottomSheet
+                            }
+                            "资产调拨部门" -> {
+                                viewModel.updateDepartmentValueId(data, number)
+                                showSheet.value = false // 关闭 ModalBottomSheet
+                            }
+                            "资产调拨使用人" -> {
+                                viewModel.updateUserValueId(data, number)
+                                showSheet.value = false // 关闭 ModalBottomSheet
+                            }
+                        }
+                    }
+                )
             }
         }
 

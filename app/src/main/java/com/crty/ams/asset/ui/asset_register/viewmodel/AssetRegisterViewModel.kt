@@ -35,7 +35,8 @@ class AssetRegisterViewModel @Inject constructor(
             sn = "",
             supplier = "",
             purchase_date = "",
-            price = ""
+            price = "",
+            remark = ""
         )
     )
     val asset: StateFlow<AssetInfo> = _asset.asStateFlow()
@@ -82,6 +83,10 @@ class AssetRegisterViewModel @Inject constructor(
         _asset.value = _asset.value.copy(price = value)
     }
 
+    fun onRemarkChanged(value: String) {
+        _asset.value = _asset.value.copy(remark = value)
+    }
+
 
     //将下拉框选项的name和id与文本输入框绑定
     fun updateAssetCategoryId(name: String, id: Int) {
@@ -91,7 +96,7 @@ class AssetRegisterViewModel @Inject constructor(
 
 
     fun submit(){
-        println("资产登记输入值: ${_asset.value.asset_code} ${_asset.value.asset_name} ${_asset.value.asset_category_id} ${_asset.value.brand} ${_asset.value.model} ${_asset.value.sn} ${_asset.value.supplier} ${_asset.value.purchase_date} ${_asset.value.price} ")
+        println("资产登记输入值: ${_asset.value.asset_code} ${_asset.value.asset_name} ${_asset.value.asset_category_id} ${_asset.value.brand} ${_asset.value.model} ${_asset.value.sn} ${_asset.value.supplier} ${_asset.value.purchase_date} ${_asset.value.price} ${_asset.value.remark} ")
         performOperation()
         println("epc:${_epc.value},barcode:${_barcode.value}")
 

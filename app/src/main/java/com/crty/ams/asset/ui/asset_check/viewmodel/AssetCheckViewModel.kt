@@ -24,7 +24,8 @@ class AssetCheckViewModel @Inject constructor(
             sn = "",
             supplier = "",
             purchase_date = "",
-            price = ""
+            price = "",
+            remark = "",
         )
     )
     val asset: StateFlow<AssetInfo> = _asset.asStateFlow()
@@ -40,6 +41,7 @@ class AssetCheckViewModel @Inject constructor(
         _asset.value = _asset.value.copy(supplier = "supplier")
         _asset.value = _asset.value.copy(purchase_date = "pur")
         _asset.value = _asset.value.copy(price = "price")
+        _asset.value = _asset.value.copy(remark = "remark")
     }
 
 }

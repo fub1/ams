@@ -120,7 +120,12 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
                 popUpTo("home") { inclusive = true }
             }
         }
-        10 -> println("Terms button clicked")
+        10 -> {
+            println("unbinding button clicked")
+            navController.navigate("assetUnbindingMS/12") {
+                popUpTo("home") { inclusive = true }
+            }
+        }
         else -> println("Unknown button clicked")
     }
 }
