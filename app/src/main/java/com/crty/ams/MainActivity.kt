@@ -16,7 +16,6 @@ import com.crty.ams.core.ui.navigation.RouteList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -36,6 +35,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             AmsTheme {
                 AppNavigation(start = RouteList.Login)
+
+
 
 
             }

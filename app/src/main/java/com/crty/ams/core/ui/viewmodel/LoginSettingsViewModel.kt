@@ -1,10 +1,13 @@
-// LoginSettingsViewModel.kt
 package com.crty.ams.core.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crty.ams.AppParameter
+import com.crty.ams.core.data.network.api.CoreApiService
+import com.crty.ams.core.data.network.model.SystemStampResponse
 import com.crty.ams.core.data.repository.AppParameterRepository
+import com.crty.ams.core.data.repository.CoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -12,60 +15,68 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginSettingsViewModel @Inject constructor(
-    private val appParameterRepository: AppParameterRepository
+    private val appParameterRepository: AppParameterRepository,
+    private val coreRepository: CoreRepository
 ) : ViewModel() {
-    private val _serverName = MutableStateFlow("")
-    private val _serverPort = MutableStateFlow(0)
 
-    val uiState: StateFlow<LoginSettingsUiState> = combine(
-        appParameterRepository.appParameterFlow,
-        _serverName,
-        _serverPort
-    ) { appParameter, serverName, serverPort ->
-        LoginSettingsUiState(
-            serverName = serverName, // Use the updated server name
-            serverPort = serverPort  // Use the updated server port
-        )
-    }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = LoginSettingsUiState()
-        )
+    private val _uiState = MutableStateFlow(LoginSettingsUiState())
+    val uiState: StateFlow<LoginSettingsUiState> = _uiState.asStateFlow()
 
     init {
-        // Load initial values from DataStore
         viewModelScope.launch {
-            appParameterRepository.appParameterFlow.collectLatest { appParameter ->
-                _serverName.value = appParameter.baseUrl
-                _serverPort.value = appParameter.basePort
+            appParameterRepository.appParameterFlow.collect { appParameter ->
+                _uiState.value = LoginSettingsUiState(
+                    serverAddress = appParameter.baseUrl,
+                    serverPort = appParameter.basePort
+                )
             }
         }
     }
 
-    fun onServerNameChanged(newValue: String) {
-        _serverName.value = newValue
+    fun onServerAddressChanged(newValue: String) {
+        _uiState.value = _uiState.value.copy(serverAddress = newValue)
     }
 
     fun onServerPortChanged(newValue: String) {
-        _serverPort.value = try {
-            newValue.toInt()
-        } catch (e: NumberFormatException) {
-            8080 // Default port
+        _uiState.value = _uiState.value.copy(serverPort = newValue.toIntOrNull())
+    }
+
+    fun onSaveSettingsClick() {
+        viewModelScope.launch {
+            try {
+                val updatedAppParameter = AppParameter.newBuilder()
+                    .setBaseUrl(_uiState.value.serverAddress)
+                    .setBasePort(_uiState.value.serverPort ?: 8000)
+                    .build()
+
+                appParameterRepository.updateAppParameter(updatedAppParameter)
+            } catch (e: Exception) {
+                Log.e("LoginSettingsViewModel", "Error saving settings", e)
+                // Handle error (e.g., show Snackbar)
+            }
         }
     }
 
-    suspend fun onSaveSettingsClick() {
-        // Save settings to your data store here using _serverName.value and _serverPort.value
-        val updatedAppParameter = AppParameter.newBuilder()
-            .setBaseUrl(_serverName.value)
-            .setBasePort(_serverPort.value)
-            .build()
-        appParameterRepository.updateAppParameter(updatedAppParameter)
+    fun onCheck() {
+        viewModelScope.launch {
+            val result = coreRepository.getSystemStamp()
+            Log.d("LoginSettingsViewModel", "onCheck: $result")
+            result.onSuccess { systemStampResponse ->
+                // Handle successful response
+                val timestamp = systemStampResponse.timestamp
+                // Update UI or perform other actions with the timestamp
+            }.onFailure {exception ->
+                Log.e("LoginSettingsViewModel", "Error checking system stamp", exception)
+                // Handle error
+                // Log the error, display an error message, etc.
+            }
+        }
     }
+
+
 }
 
 data class LoginSettingsUiState(
-    val serverName: String = "",
-    val serverPort: Int = 0
+    val serverAddress: String = "",
+    val serverPort: Int? = null
 )

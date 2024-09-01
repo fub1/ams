@@ -2,16 +2,22 @@ package com.crty.ams.core.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crty.ams.core.data.network.model.AssetCategory
+import com.crty.ams.core.data.network.model.AssetRegistrationRequest
+import com.crty.ams.core.data.repository.CoreRepository
 import kotlinx.coroutines.flow.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+
+import kotlin.random.Random
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val coreRepository: CoreRepository
     // Inject your repository or use case here
 ) : ViewModel() {
 
@@ -20,9 +26,6 @@ class LoginViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     private val _isUserNameError = MutableStateFlow(false)
     private val _isPasswordError = MutableStateFlow(false)
-
-    private val _isLoggedIn = MutableStateFlow(false)//用来监听是否登录成功
-//    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
 
     val uiState: StateFlow<LoginUiState> = combine(
         _username, _password, _isLoading, _isUserNameError, _isPasswordError
@@ -41,17 +44,59 @@ class LoginViewModel @Inject constructor(
         initialValue = LoginUiState()
     )
 
-//    val uiState2: StateFlow<LoginUiState2> = combine(
-//        _isLoggedIn
-//    ){ isLoggedIn ->
-//        LoginUiState2(
-//            isLoggedIn = isLoggedIn
-//        )
-//    }.stateIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.Eagerly,
-//        initialValue = LoginUiState2()
-//    )
+    fun fetchdepartment() {
+        viewModelScope.launch {
+            coreRepository.getDepartment()
+        }
+    }
+
+    fun fetchlocations() {
+        viewModelScope.launch {
+            coreRepository.getLocations()
+        }
+    }
+
+    fun fetchAssetCategory() {
+        viewModelScope.launch {
+            coreRepository.getAssetCategory()
+        }
+    }
+
+    fun submitAsset() {
+        viewModelScope.launch {
+            coreRepository.submitAssetCategory(
+                "demoForTest" + Random.nextInt().toString(),
+                "T_"+Random.nextInt().toString(),
+                0
+            )
+        }
+    }
+
+    fun submitAssetRegister() {
+        val toRequest = AssetRegistrationRequest(
+            assetCode = "Asset-demoCode" + Random.nextInt().toString(),
+            assetName = "Asset-demoName" + Random.nextInt().toString(),
+            assetCategoryId = 5,
+            brand = "小米",
+            model = "X13",
+            sn = Random.nextInt().toString(),
+            supplier = "小米",
+            purchaseDate = "2024-09-01",
+            price = 100.0,
+            remark = "测试",
+            rfidCodeTid = "E2801" + Random.nextInt().toString(),
+            rfidCodeEpc = "E2801" + Random.nextInt().toString(),
+            barcode = null)
+        viewModelScope.launch {
+            coreRepository.submitAssetRegistration(toRequest)
+        }
+    }
+
+
+    
+
+
+
 
     fun onUsernameChanged(newUsername: String) {
         _username.value = newUsername
@@ -67,14 +112,19 @@ class LoginViewModel @Inject constructor(
             // viewmodelScope timeout
             try {
                 withTimeout(2000) {
+
+                    coreRepository.login()
+
                     delay(7000)
 
-                    // Perform validation
 
-                    _isLoggedIn.value = true//模拟登陆成功
+                    // Perform validation
                 }
             } catch (e: TimeoutCancellationException) {
                 _isLoading.value = false
+
+
+                // 用来测试的方法
 
 
 
@@ -107,6 +157,3 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val loginError: String? = null
 )
-//data class LoginUiState2(
-//    val isLoggedIn: Boolean = false
-//)

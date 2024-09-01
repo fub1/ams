@@ -2,6 +2,7 @@
 package com.crty.ams.core.ui.screen
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -118,6 +119,119 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hi
             if (uiState.value.isLoading) {
                 CircularProgressIndicator()
             }
+            // 测试
+            Button(
+                onClick = {
+                    navController.navigate("attributeScreen")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Go to Attribute Screen")
+            }
+
+            // 测试用
+            Row {
+                Button(
+                    onClick = {
+                        viewModel.fetchlocations()
+                    },
+                    enabled = true,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("取地点")
+                }
+
+                Button(
+                    onClick = {
+                        viewModel.fetchAssetCategory()
+                    },
+                    // enabled = false,
+                    modifier = Modifier
+                        .weight(1f)
+
+                ) {
+                    Text("取资产类")
+                }
+
+                Button(
+                    onClick = {
+                        viewModel.fetchdepartment()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("取部门")
+                }
+
+            }
+
+            Row {
+                Button(
+                    onClick = {
+                        viewModel.onLoginClick()
+                    },
+                    enabled = false,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("建地点")
+                }
+
+                Button(
+                    onClick = {
+                        viewModel.submitAsset()
+                    },
+                    // enabled = false,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("建资产类")
+                }
+
+                Button(
+                    enabled = false,
+                    onClick = {
+                        viewModel.fetchdepartment()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("建部门")
+                }
+
+            }
+
+            Row {
+                Button(
+                    onClick = {
+                        viewModel.submitAssetRegister()
+                    },
+                    //enabled = false,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("资产REG")
+                }
+
+                Button(
+                    onClick = {
+                        viewModel.submitAsset()
+                    },
+                    enabled = false,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("资产查询")
+                }
+
+                Button(
+                    enabled = false,
+                    onClick = {
+                        viewModel.fetchdepartment()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("资产绑定")
+                }
+
+            }
+
+
+
         }
     }
 }
