@@ -14,12 +14,27 @@ import javax.inject.Inject
 class RfidScanManager @Inject constructor (context: Context) {
 
     // RFID模块实例
-    // 使用 lateinit 来延迟初始化
+    // 使用 late-init 来延迟初始化
     private lateinit var mRfid: UHFService
+
 
     // MutableSharedFlow 用于发射 UHFTAGInfo 对象
     private val _rfidTagsStateFlow = MutableStateFlow<List<EPC>>(emptyList())
     val rfidTagsStateFlow: StateFlow<List<EPC>> = _rfidTagsStateFlow
+
+
+
+    // 创建 IReadTagsListener 回调
+    private val rfidCallBack = IReadTagsListener { epcList ->
+        epcList.forEach { epc ->
+            val rssi = epc.rssi
+            Log.i("RFID-TagRead", "EPC ID: $epc, RSSI: $rssi,count:")
+        }
+        Log.d("RfidScanManager", "Tag received in callback: $epcList")
+        _rfidTagsStateFlow.value = epcList // 更新 StateFlow
+    }
+
+
 
     // jetpack组件副作用`DisposableEffect`初始化RFID模块
     // 初始化RFID模块后，直接将RFID读取回调注册到flow中
@@ -36,17 +51,13 @@ class RfidScanManager @Inject constructor (context: Context) {
             // session 0
             mRfid.setParameters(1,0)
             Log.i("RFID-init", "RFID is isPowerOn: ${mRfid.isOpen}+${mRfid.region}+${mRfid.power}")
+            // 设置回调
 
-            val rfidCallBack = IReadTagsListener { epcList ->
-                Log.d("RfidScanManager", "Tag received in callback:${epcList}")
-                _rfidTagsStateFlow.value = epcList
 
-                for (epc in epcList) {
-                    val epcId = epc.id
-                    val rssi = epc.rssi
-                    Log.i("RFID-TagRead", "EPC ID: $epcId, RSSI: $rssi")
-                }
-            }
+
+
+
+
         } catch (e: NullPointerException) {
             Log.i("RFID-isRfidAvailable", "RFID reader verify not pass")
         }
@@ -82,17 +93,25 @@ class RfidScanManager @Inject constructor (context: Context) {
     fun startInventoryTag() {
         if (!mRfid.isOpen) {
             Log.i("RFID-startInventoryTag", "RFID is not powered on")
+
+
         }
         Log.i("RFID-startInventoryTag", "startInventoryTag")
+        mRfid.registerReadTags(rfidCallBack)
         mRfid.inventoryStart()
+
+
+
     }
 
     fun stopInventoryTag() {
         if (!mRfid.isOpen) {
             Log.i("RFID-stopInventoryTag", "RFID is not powered on")
         }
+
+        mRfid.inventoryStop()
+        mRfid.registerReadTags(rfidCallBack)
         Log.i("RFID-stopInventoryTag", "stopInventoryTag")
-        mRfid.inventoryStart()
     }
 
 
