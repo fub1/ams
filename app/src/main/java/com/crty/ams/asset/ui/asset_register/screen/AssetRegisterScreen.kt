@@ -23,7 +23,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -33,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -86,6 +89,13 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
     val remark = asset.remark
     // Collect other inputs similarly...
 
+    val isLoading by viewModel.isLoading.collectAsState()
+    val isTimeout by viewModel.isTimeout.collectAsState()
+    val isFailed by viewModel.isFailed.collectAsState()
+    val failedMessage by viewModel.failedMessage.collectAsState()
+    val isError by viewModel.isError.collectAsState()
+
+
     var codeError by remember { mutableStateOf(false) }
     var codeLabel by remember { mutableStateOf("* 请输入资产代码") }
     var nameError by remember { mutableStateOf(false) }
@@ -96,6 +106,8 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
     var brandLabel by remember { mutableStateOf("* 请输入品牌") }
     var modelError by remember { mutableStateOf(false) }
     var modelLabel by remember { mutableStateOf("* 请输入型号") }
+    var priceError by remember { mutableStateOf(false) }
+    var priceLabel by remember { mutableStateOf("请输入价格") }
 
     // Get the context here
     val context = LocalContext.current
@@ -103,19 +115,6 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
     // State to control the visibility of the ModalBottomSheet
     val showSheet = remember { mutableStateOf(false) }
     val selectedAttributeType = remember { mutableStateOf("") }
-//    val selectedData = navController.currentBackStackEntry
-//        ?.savedStateHandle
-//        ?.getLiveData<String>("selectedData")?.observeAsState()
-//    val selectedInt = navController.currentBackStackEntry
-//        ?.savedStateHandle
-//        ?.getLiveData<Int>("selectedInt")?.observeAsState()
-//
-//    // 当数据返回时更新 ViewModel
-//    selectedData?.value?.let { data ->
-//        selectedInt?.value?.let { number ->
-//            viewModel.updateAssetCategoryId(data, number)
-//        }
-//    }
 
 
     val calendar = Calendar.getInstance()
@@ -158,6 +157,15 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
             modelError = true
             modelLabel = "型号不能为空"
             isFill = false
+        }
+        if (price.isEmpty()){
+            viewModel.onPriceChanged("0")
+        }else{
+            if (!isNumeric(price)){
+                priceError = true
+                priceLabel = "请输入数字"
+                isFill = false
+            }
         }
 
         if (isFill){
@@ -326,14 +334,15 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
             )
             TextFieldWithLabel(
                 text = "价格",
-                label = "请输入价格",
+                label = priceLabel,
                 value = price,
                 onValueChange = { viewModel.onPriceChanged(it) },
                 onClick = {
                     // Handle click event here
 //                    Toast.makeText(context, "Input 9 clicked", Toast.LENGTH_SHORT).show()
+                    viewModel.onPriceChanged("")
                 },
-                false
+                priceError
             )
             TextFieldWithLabel(
                 text = "备注",
@@ -379,6 +388,53 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
             if (showSuccessPopup) {
                 SuccessPopup()
             }
+        }
+        // 加载动画
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()  // 显示加载动画
+            }
+        }
+        if (isTimeout) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissTimeoutDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissTimeoutDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("请求超时") },
+                text = { Text("请求登记接口超时，请重试。") }
+            )
+        }
+        if (isFailed) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissFieldDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissFieldDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("登记失败") },
+                text = { Text(failedMessage) }
+            )
+        }
+        if (isError) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissErrorDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissErrorDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("操作异常") },
+                text = { Text("登记过程中出现异常。") }
+            )
         }
     }
 }
@@ -463,4 +519,8 @@ fun SuccessPopup() {
             }
         }
     }
+}
+
+fun isNumeric(value: String): Boolean {
+    return value.toDoubleOrNull() != null
 }

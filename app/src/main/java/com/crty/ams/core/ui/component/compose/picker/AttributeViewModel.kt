@@ -1,5 +1,6 @@
 package com.crty.ams.core.ui.compose.picker
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crty.ams.asset.ui.asset_allocation.viewmodel.AssetAllocationViewModel
@@ -94,9 +95,9 @@ open class AttributeViewModel  @Inject constructor(
             when(_attributeType.value){
                 "资产分类" -> {
                     val result: Result<AssetCategoryResponse> = coreRepository.getAssetCategory()
-                    println("返回值${result.getOrNull()?.data?.get(0)?.id}")
-                    val newAttributesList = mutableListOf<AttributeEntity>()
+//                    println("返回值${result.getOrNull()?.data?.get(0)?.id}")
                     // 遍历 result.getOrNull()?.data 并创建新的 AttributeEntity 对象
+                    val newAttributesList = mutableListOf<AttributeEntity>()
                     result.getOrNull()?.data?.forEach { attributeData ->
                         // 假设 attributeData 是你想要转换为 AttributeEntity 的数据类型
                         val attributeEntity = AttributeEntity(
@@ -109,10 +110,11 @@ open class AttributeViewModel  @Inject constructor(
                         // 将新创建的 AttributeEntity 对象添加到列表中
                         newAttributesList.add(attributeEntity)
                     }
-                    println("循环完的长度："+newAttributesList.size)
-                    _allAttributes = newAttributesList
-                    _state.value = _state.value.copy(
 
+                    _allAttributes = newAttributesList
+
+                    _state.value = _state.value.copy(
+                        firstLevelAttributes = _allAttributes.filter { it.parentId == 0 }
                     )
                 }
             }
@@ -130,10 +132,6 @@ open class AttributeViewModel  @Inject constructor(
 //            AttributeEntity(9, 0,"First Level Option 5"),
 //            AttributeEntity(10, 0,"First Level Option 6"),
 //        )
-
-        _state.value = _state.value.copy(
-            firstLevelAttributes = _allAttributes.filter { it.parentId == 0 }
-        )
     }
 
     fun toAttributeCreateMode() {

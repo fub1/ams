@@ -27,7 +27,7 @@ class AssetChangeSingleViewModel @Inject constructor(
             asset_code = "",
             asset_name = "",
             asset_category = "",
-            asset_category_id = null,
+            asset_category_id = 0,
             brand = "",
             model = "",
             sn = "",

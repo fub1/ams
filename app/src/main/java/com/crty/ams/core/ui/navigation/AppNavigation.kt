@@ -74,12 +74,13 @@ fun AppNavigation(start: RouteList) {
             )
         ) {backStackEntry ->
             // 获取传递的参数
+            val tid = backStackEntry.arguments?.getString("tid") ?: ""
             val epc = backStackEntry.arguments?.getString("epc") ?: ""
             val barcode = backStackEntry.arguments?.getString("barcode") ?: ""
 
             // 创建 AttributePageViewModel，并传递参数
             val viewModel: AssetRegisterViewModel = hiltViewModel()
-            viewModel.setEpcAndBarcode(epc, barcode)
+            viewModel.setEpcAndBarcode(tid, epc, barcode)
             AssetRegisterScreen(navController, viewModel)
         }
 
@@ -134,7 +135,7 @@ enum class RouteList(val description: String) {
     Test("compose"),
     Camera("camera"),
     Picker("picker"),
-    AssetRegister("assetRegister/{epc}/{barcode}"),
+    AssetRegister("assetRegister/{tid}/{epc}/{barcode}"),
     AssetCheck("assetCheck"),
     InventoryList("inventoryList"),
     CreateInventory("createInventory"),
