@@ -10,7 +10,7 @@
 # 在项目结构中配置
 agp = "8.5.2"
 
-coilCompose = "2.4.0"
+coilCompose = "2.7.0"
 converterMoshi = "2.9.0"
 jetbrainsKotlinxSerializationJson = "1.5.1"
 kotlin = "2.0.10"
@@ -39,7 +39,7 @@ coreSplashscreen = "1.0.1"
 # Libs Group2: AndroidX.Compose
 compose = "1.6.8"
 compose_m3 = "1.2.1"
-composeBom = "2024.06.00"
+composeBom = "2024.08.00"
 
 # Libs Group3: androidx-activity-compose
 activityCompose = "1.9.1"
@@ -59,7 +59,7 @@ hilt = "1.2.0"
 # Libs Group6: Navigation
 # https://developer.android.com/jetpack/androidx/releases/navigation
 loggingInterceptor = "4.9.3"
-lottieCompose = "6.0.1"
+lottieCompose = "6.5.1"
 moshiKotlin = "2.9.0"
 navigation = "2.7.7"
 # Libs Group7: Paging
@@ -71,7 +71,7 @@ room = "2.6.1"
 
 # Libs Group9: Preferences DataStore & Proto DataStore
 datastore = "1.1.1"
-google-protobuf = "4.27.2"
+google-protobuf = "4.28.0"
 google-protobuf-plugins = "0.9.4"
 
 # Libs Group10: WorkManager
