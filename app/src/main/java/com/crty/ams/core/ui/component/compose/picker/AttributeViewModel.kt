@@ -7,6 +7,8 @@ import com.crty.ams.asset.ui.asset_change_batch.viewmodel.AssetChangeBatchViewMo
 import com.crty.ams.asset.ui.asset_change_single.viewmodel.AssetChangeSingleViewModel
 import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
 import com.crty.ams.asset.ui.asset_inventory_detail_filter.viewmodel.InventoryDetailFilterViewModel
+import com.crty.ams.core.data.network.model.AssetCategoryResponse
+import com.crty.ams.core.data.repository.CoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 open class AttributeViewModel  @Inject constructor(
-
+    private val coreRepository: CoreRepository
 ) : ViewModel() {
 
     private val eventShowLoading = MutableStateFlow(false)
@@ -31,6 +33,7 @@ open class AttributeViewModel  @Inject constructor(
     private val selectedSecondLevelId = MutableStateFlow<Int?>(null)
     private val selectedThirdLevelId = MutableStateFlow<Int?>(null)
 
+    private val _attributeType = MutableStateFlow("") /* 调组件时传入的参数 */
 
 
     private var _allAttributes: List<AttributeEntity> = emptyList()
@@ -86,18 +89,47 @@ open class AttributeViewModel  @Inject constructor(
 
     fun fetchAllAttributes()
     {
-        _allAttributes = listOf(
-            AttributeEntity(1, 0,"First Level Option 1"),
-            AttributeEntity(2, 0,"First Level Option 2"),
-            AttributeEntity(3, 2,"First Level Option 2-1"),
-            AttributeEntity(4, 2,"First Level Option 2-2"),
-            AttributeEntity(5, 4,"First Level Option 2-2-1"),
-            AttributeEntity(6, 4,"First Level Option 2-2-2"),
-            AttributeEntity(7, 1,"First Level Option 1-1"),
-            AttributeEntity(8, 0,"First Level Option 4"),
-            AttributeEntity(9, 0,"First Level Option 5"),
-            AttributeEntity(10, 0,"First Level Option 6"),
-        )
+
+        viewModelScope.launch {
+            when(_attributeType.value){
+                "资产分类" -> {
+                    val result: Result<AssetCategoryResponse> = coreRepository.getAssetCategory()
+                    println("返回值${result.getOrNull()?.data?.get(0)?.id}")
+                    val newAttributesList = mutableListOf<AttributeEntity>()
+                    // 遍历 result.getOrNull()?.data 并创建新的 AttributeEntity 对象
+                    result.getOrNull()?.data?.forEach { attributeData ->
+                        // 假设 attributeData 是你想要转换为 AttributeEntity 的数据类型
+                        val attributeEntity = AttributeEntity(
+                            // 在这里填充 AttributeEntity 的属性
+                            id = attributeData.id,
+                            parentId = attributeData.parentId,
+                            name = attributeData.description
+                            // 其他属性...
+                        )
+                        // 将新创建的 AttributeEntity 对象添加到列表中
+                        newAttributesList.add(attributeEntity)
+                    }
+                    println("循环完的长度："+newAttributesList.size)
+                    _allAttributes = newAttributesList
+                    _state.value = _state.value.copy(
+
+                    )
+                }
+            }
+        }
+
+//        _allAttributes = listOf(
+//            AttributeEntity(1, 0,"First Level Option 1"),
+//            AttributeEntity(2, 0,"First Level Option 2"),
+//            AttributeEntity(3, 2,"First Level Option 2-1"),
+//            AttributeEntity(4, 2,"First Level Option 2-2"),
+//            AttributeEntity(5, 4,"First Level Option 2-2-1"),
+//            AttributeEntity(6, 4,"First Level Option 2-2-2"),
+//            AttributeEntity(7, 1,"First Level Option 1-1"),
+//            AttributeEntity(8, 0,"First Level Option 4"),
+//            AttributeEntity(9, 0,"First Level Option 5"),
+//            AttributeEntity(10, 0,"First Level Option 6"),
+//        )
 
         _state.value = _state.value.copy(
             firstLevelAttributes = _allAttributes.filter { it.parentId == 0 }
@@ -105,7 +137,7 @@ open class AttributeViewModel  @Inject constructor(
     }
 
     fun toAttributeCreateMode() {
-        fetchAllAttributes()
+//        fetchAllAttributes()
         _state.value = _state.value.copy(
             mode = AttributeViewMode.CREATE,
             secondLevelAttributes = emptyList(),
@@ -114,7 +146,7 @@ open class AttributeViewModel  @Inject constructor(
     }
 
     fun toAttributeSelectMode() {
-        fetchAllAttributes()
+//        fetchAllAttributes()
         _state.value = _state.value.copy(
             mode = AttributeViewMode.SELECT,
             secondLevelAttributes = emptyList(),
@@ -161,24 +193,10 @@ open class AttributeViewModel  @Inject constructor(
         }
         return null // 如果没有找到匹配的实体类，则返回 null
     }
-//    fun onAttributeSelected(id: Int, list: List<AttributeEntity>, attributeType: String, assetRegisterViewModel: AssetRegisterViewModel, inventoryDetailFilterViewModel: InventoryDetailFilterViewModel, assetChangeSingleViewModel: AssetChangeSingleViewModel, assetChangeBatchViewModel: AssetChangeBatchViewModel, assetAllocationViewModel: AssetAllocationViewModel) {
-//        val selectedInfo = getSelectedInfo(id, list)
-//        selectedInfo?.let { attribute ->
-//            // 更新页面 ViewModel 中的输入框值和对应的 ID
-//
-//            when (attributeType) {
-//                "资产分类" -> assetRegisterViewModel.updateAssetCategoryId(attribute.name, attribute.id)
-//                "部门" -> inventoryDetailFilterViewModel.updateTextField1ValueId(attribute.name, attribute.id)
-//                "位置" -> inventoryDetailFilterViewModel.updateTextField2ValueId(attribute.name, attribute.id)
-////                "资产分类变更" -> assetChangeSingleViewModel.updateAssetCategoryId(attribute.name, attribute.id)
-//                "批量修改资产分类" -> assetChangeBatchViewModel.updateAttributeValueId(attribute.name, attribute.id)
-//                "资产调拨位置" -> assetAllocationViewModel.updateLocationValueId(attribute.name, attribute.id)
-//                "资产调拨部门" -> assetAllocationViewModel.updateDepartmentValueId(attribute.name, attribute.id)
-//                "资产调拨使用人" -> assetAllocationViewModel.updateUserValueId(attribute.name, attribute.id)
-//                else -> println("Invalid day")
-//            }
-//        }
-//    }
+
+    fun setAttributeType(attributeType: String){
+        _attributeType.value = attributeType
+    }
 
 
 

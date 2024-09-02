@@ -226,11 +226,7 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
                                 },
                 onClick = {
                     // Handle click event here
-//                    Toast.makeText(context, "Input 1 clicked", Toast.LENGTH_SHORT).show()
-//                    System.err.println("Input 1: $input1")
-//
-//                    selectedAttributeType.value = "Attribute Type 1"
-//                    showSheet.value = true
+
                 },
                 codeError
             )
@@ -244,11 +240,7 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
                                 },
                 onClick = {
                     // Handle click event here
-//                    Toast.makeText(context, "Input 2 clicked", Toast.LENGTH_SHORT).show()
-//                    System.err.println("Input 2: $input2")
-//
-//                    selectedAttributeType.value = "Attribute Type 2"
-//                    showSheet.value = true
+
                 },
                 nameError
             )

@@ -18,11 +18,11 @@ import javax.inject.Inject
 class AssetRegisterViewModel @Inject constructor(
     // Inject your repository or use case here
 ) : ViewModel() {
-    private val _epc = MutableLiveData<String>()
-    val epc: LiveData<String> = _epc
+    private val _epc = MutableStateFlow("")
+    val epc: StateFlow<String> = _epc
 
-    private val _barcode = MutableLiveData<String>()
-    val barcode: LiveData<String> = _barcode
+    private val _barcode = MutableStateFlow("")
+    val barcode: StateFlow<String> = _barcode
 
     private val _asset = MutableStateFlow(
         AssetInfo(
