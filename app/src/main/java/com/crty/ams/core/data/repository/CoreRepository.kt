@@ -20,6 +20,7 @@ import com.crty.ams.core.data.network.model.LoginResponse
 import com.crty.ams.core.data.network.model.LoginResult
 import com.crty.ams.core.data.network.model.SubmitResponse
 import com.crty.ams.core.data.network.model.SystemStampResponse
+import com.crty.ams.pda.utils.deviceinfo.getDeviceSN
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -56,8 +57,9 @@ class CoreRepository @Inject constructor(
             val fullUrl = "${url}:${port}/api/login"
             Log.d("CoreRepository", "Fetching system stamp from: $fullUrl")
             // 执行请求
+            val sn: String = getDeviceSN()
             val response =
-                coreApiService.login(fullUrl, 1, LoginRequest("admin", "123456", "UM5230301811"))
+                coreApiService.login(fullUrl, 1, LoginRequest("admin", "123456", sn))
             Log.d("CoreRepository", "Response code: ${response.code()}")
             Log.d("CoreRepository", "Response code: ${response.body()?.code}")
             if (response.body()?.code == 0) {
@@ -278,7 +280,7 @@ class CoreRepository @Inject constructor(
     }
 
 
-    // 资产等级
+    // 资产登记
     suspend fun submitAssetRegistration(
         assetRegistrationRequest: AssetRegistrationRequest
     ): Result<SubmitResponse> {

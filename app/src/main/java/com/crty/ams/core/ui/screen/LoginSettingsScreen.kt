@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.core.ui.viewmodel.LoginSettingsViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.crty.ams.pda.ui.screen.ShowDeviceInfoScreen
 import kotlinx.coroutines.launch
 
 
@@ -57,6 +58,8 @@ fun LoginSettingsScreen(navController: NavHostController, viewModel: LoginSettin
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                ShowDeviceInfoScreen()
 
                 OutlinedTextField(
                     value = uiState.value.serverAddress,
@@ -106,6 +109,8 @@ fun LoginSettingsScreen(navController: NavHostController, viewModel: LoginSettin
                     ) {
                         Text("Check")
                     }
+
+
                 }
 
                 if (showApiStatus) {

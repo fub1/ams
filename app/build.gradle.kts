@@ -300,6 +300,13 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // project
+    //sdk-seuic
+    implementation(files("libs/misc.jar"))
+    implementation(files("libs/uhf.jar"))
+    implementation(files("libs/scankey.jar"))
+
+
 }
 
 
