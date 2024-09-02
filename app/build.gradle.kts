@@ -148,7 +148,11 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     // To use the Animator APIs
     implementation(libs.androidx.core.animation)
+
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.lifecycle)
+
 
     // To test the Animator APIs
     androidTestImplementation(libs.androidx.core.animation.testing)

@@ -85,7 +85,7 @@ retrofit = "2.11.0"
 gson = "2.11.0"
 
 # Libs Group13: coil
-coilCompose = "2.7.0"
+# coilCompose = "2.7.0"
 
 # Libs Group14: CameraX
 cameraX = "1.3.4"
@@ -97,7 +97,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-
+runtimeLivedata = "1.6.8"
 
 
 
@@ -218,6 +218,9 @@ retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref =
 retrofit2-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
+
+
+
 # Libs Group12: coroutines协程
 # https://github.com/Kotlin/kotlinx.coroutines/releases
 # https://developer.android.com/kotlin/coroutines
@@ -226,7 +229,7 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 
 # Libs Group13: Coil
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coilCompose" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+# coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coilCompose" }
 
 # Libs Group14: CameraX
@@ -243,6 +246,8 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -253,3 +258,4 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 android-library = { id = "com.android.library", version.ref = "agp" }
 # options for proto
 google-protobuf = { id = "com.google.protobuf", version.ref = "google-protobuf-plugins" }
+# livedata
