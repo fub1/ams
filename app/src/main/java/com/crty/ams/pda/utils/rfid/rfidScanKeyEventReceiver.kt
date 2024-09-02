@@ -1,5 +1,6 @@
 package com.crty.ams.pda.utils.rfid//package com.xyx.seuicpda.utils.rfid
-//
+// 成为实现方法
+
 //import android.content.BroadcastReceiver
 //import android.content.Context
 //import android.content.Intent

@@ -30,6 +30,7 @@ import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
 import com.crty.ams.asset.ui.asset_unbinding_ms.screen.AssetUnbindingScreen
 import com.crty.ams.asset.ui.asset_unbinding_ms.viewmodel.AssetUnbindingViewModel
 import com.crty.ams.core.ui.compose.picker.AttributePage
+import com.crty.ams.pda.ui.screen.RfidScanScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropViewModel
 
@@ -37,6 +38,14 @@ import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcro
 fun AppNavigation(start: RouteList) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = start.description) {
+        // 测试用路由
+
+        composable("rfid_demo") {
+            RfidScanScreen(navController)
+        }
+
+
+
         composable(route = RouteList.Login.description) {
             LoginScreen(navController)
         }

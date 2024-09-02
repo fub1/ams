@@ -2,12 +2,11 @@ package com.crty.ams.pda.utils.rfid
 
 import android.content.Context
 import android.util.Log
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
-import com.seuic.uhf.UHFService
 import com.seuic.uhf.EPC
 import com.seuic.uhf.IReadTagsListener
+import com.seuic.uhf.UHFService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 
@@ -15,7 +14,8 @@ import javax.inject.Inject
 class RfidScanManager @Inject constructor (context: Context) {
 
     // RFID模块实例
-    private val mRfid = UHFService.getInstance(context)
+    // 使用 lateinit 来延迟初始化
+    private lateinit var mRfid: UHFService
 
     // MutableSharedFlow 用于发射 UHFTAGInfo 对象
     private val _rfidTagsStateFlow = MutableStateFlow<List<EPC>>(emptyList())
@@ -25,11 +25,17 @@ class RfidScanManager @Inject constructor (context: Context) {
     // 初始化RFID模块后，直接将RFID读取回调注册到flow中
     fun initRfid(context: Context) {
         try {
+            // 确保每次初始化时（页面每次Start时）都，创建一个新的UHFService实例，确保app可以接管RFID模块
+            // 必须context
+            mRfid = UHFService.getInstance(context)
             mRfid.open()
-            Log.i("RFID-init", "RFID is isPowerOn: ${mRfid.isOpen}+${mRfid.region}")
 
-            mRfid.setRegion("FCC")
+
+            mRfid.setRegion("China1")
             mRfid.setPower(33)
+            // session 0
+            mRfid.setParameters(1,0)
+            Log.i("RFID-init", "RFID is isPowerOn: ${mRfid.isOpen}+${mRfid.region}+${mRfid.power}")
 
             val rfidCallBack = IReadTagsListener { epcList ->
                 Log.d("RfidScanManager", "Tag received in callback:${epcList}")
@@ -49,7 +55,9 @@ class RfidScanManager @Inject constructor (context: Context) {
     // jetpack组件副作用`DisposableEffect`销毁RFID模块
     fun destroyRfid(){
         if (mRfid.isOpen) {
+
             mRfid.close()
+            Log.i("RFID-destroyRfid", "Rfid is Power On ${mRfid.isOpen}")
 
         }
     }
@@ -86,6 +94,8 @@ class RfidScanManager @Inject constructor (context: Context) {
         Log.i("RFID-stopInventoryTag", "stopInventoryTag")
         mRfid.inventoryStart()
     }
+
+
 
 
 }

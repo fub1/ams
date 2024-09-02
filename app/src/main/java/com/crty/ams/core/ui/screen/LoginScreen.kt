@@ -230,6 +230,39 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = hi
 
             }
 
+            Row {
+                Button(
+                    onClick = {
+                        navController.navigate("rfid_demo")
+                    },
+                    // enabled = false,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("RFID")
+                }
+
+                Button(
+                    onClick = {
+                        viewModel.submitAsset()
+                    },
+                    enabled = false,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("K-Event")
+                }
+
+                Button(
+                    enabled = false,
+                    onClick = {
+                        viewModel.fetchdepartment()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Bar-S")
+                }
+
+            }
+
 
 
         }
