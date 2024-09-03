@@ -4,7 +4,9 @@ package com.crty.ams.core.data.network.api
 
 import com.crty.ams.core.data.network.model.AssetCategoryRequest
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
+import com.crty.ams.core.data.network.model.AssetChangeRequest
 import com.crty.ams.core.data.network.model.AssetRegistrationRequest
+import com.crty.ams.core.data.network.model.AssetUnbindingMSRequest
 import com.crty.ams.core.data.network.model.DepartmentResponse
 import com.crty.ams.core.data.network.model.LocationResponse
 import com.crty.ams.core.data.network.model.LoginRequest
@@ -87,6 +89,24 @@ interface CoreApiService {
         @Header("Language") language: Int,
         @Header("Authorization") token: String,
         @Body requestBody: AssetRegistrationRequest
+    ): Response<SubmitResponse>
+
+    // 主从资产解绑
+    @POST
+    suspend fun submitUnbindingMS(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String,
+        @Body requestBody: AssetUnbindingMSRequest
+    ): Response<SubmitResponse>
+
+    // 单个/批量资产变更
+    @POST
+    suspend fun submitAssetChange(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String,
+        @Body requestBody: AssetChangeRequest
     ): Response<SubmitResponse>
 
 

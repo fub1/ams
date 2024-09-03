@@ -34,6 +34,7 @@ open class SingleRollerViewModel  @Inject constructor(
                 "供应商",
                 "采购日期",
                 "价格",
+                "备注"
             )
         }
     }

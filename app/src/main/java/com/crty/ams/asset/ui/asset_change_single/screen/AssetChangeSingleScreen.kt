@@ -19,7 +19,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -29,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,6 +56,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.crty.ams.R
 import com.crty.ams.asset.ui.asset_change_single.viewmodel.AssetChangeSingleViewModel
+import com.crty.ams.core.data.model.AssetInfo
 import com.crty.ams.core.ui.compose.picker.AttributePage
 import com.crty.ams.core.ui.compose.picker.AttributeViewModel
 import com.crty.ams.core.ui.theme.AmsTheme
@@ -61,7 +65,9 @@ import java.util.Calendar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssetChangeSingleScreen(navController: NavHostController, viewModel: AssetChangeSingleViewModel = hiltViewModel(), attributeViewModel: AttributeViewModel = hiltViewModel()) {
+fun AssetChangeSingleScreen(navController: NavHostController,
+                            assetInfo: AssetInfo,
+                            viewModel: AssetChangeSingleViewModel = hiltViewModel()) {
     val topBar = stringResource(R.string.asset_screen_assetChangeSingleScreen_topBar)
 
     val asset by viewModel.asset.collectAsState()
@@ -93,7 +99,16 @@ fun AssetChangeSingleScreen(navController: NavHostController, viewModel: AssetCh
 
     // 监听 ViewModel 中的弹窗显示状态
     val showSuccessPopup by viewModel.showSuccessPopup
+    val isLoading by viewModel.isLoading.collectAsState()
+    val isTimeout by viewModel.isTimeout.collectAsState()
+    val isFailed by viewModel.isFailed.collectAsState()
+    val failedMessage by viewModel.failedMessage.collectAsState()
+    val isError by viewModel.isError.collectAsState()
 
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchData(assetInfo)
+    }
 
     Scaffold(
         topBar = {
@@ -113,7 +128,7 @@ fun AssetChangeSingleScreen(navController: NavHostController, viewModel: AssetCh
             AmsTheme{
                 FloatingActionButton(onClick = {
                     // Handle FAB click action here
-//                    viewModel.submit()
+                    viewModel.submit()
                 }) {
                     Icon(Icons.Default.Check, contentDescription = "Submit")
                 }
@@ -307,6 +322,55 @@ fun AssetChangeSingleScreen(navController: NavHostController, viewModel: AssetCh
             if (showSuccessPopup) {
                 ChangeSuccessPopup()
             }
+        }
+
+
+// 加载动画
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()  // 显示加载动画
+            }
+        }
+        if (isTimeout) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissTimeoutDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissTimeoutDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("请求超时") },
+                text = { Text("请求登记接口超时，请重试。") }
+            )
+        }
+        if (isFailed) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissFieldDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissFieldDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("登记失败") },
+                text = { Text(failedMessage) }
+            )
+        }
+        if (isError) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissErrorDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissErrorDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("操作异常") },
+                text = { Text("登记过程中出现异常。") }
+            )
         }
 
     }

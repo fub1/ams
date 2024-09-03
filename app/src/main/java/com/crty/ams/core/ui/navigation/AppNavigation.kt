@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.crty.ams.asset.data.network.model.AssetForGroup
 import com.crty.ams.asset.data.network.model.AssetForList
 import com.crty.ams.asset.ui.asset_allocation.screen.AssetAllocationScreen
 import com.crty.ams.asset.ui.asset_change_batch.screen.AssetChangeBatchScreen
@@ -30,7 +31,9 @@ import com.crty.ams.asset.ui.asset_inventory_list.screen.InventoryListScreen
 import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
 import com.crty.ams.asset.ui.asset_unbinding_ms.screen.AssetUnbindingScreen
 import com.crty.ams.asset.ui.asset_unbinding_ms.viewmodel.AssetUnbindingViewModel
+import com.crty.ams.core.data.model.AssetInfo
 import com.crty.ams.core.ui.compose.picker.AttributePage
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropViewModel
@@ -71,6 +74,7 @@ fun AppNavigation(start: RouteList) {
         composable(
             route = RouteList.AssetRegister.description,
             arguments = listOf(
+                navArgument("tid") { type = NavType.StringType },
                 navArgument("epc") { type = NavType.StringType },
                 navArgument("barcode") { type = NavType.StringType }
             )
@@ -101,11 +105,25 @@ fun AppNavigation(start: RouteList) {
         composable(route = RouteList.MultilevelListTest.description) {
             MultilevelListScreen()
         }
-        composable(route = RouteList.AssetChangeSingle.description) {
-            AssetChangeSingleScreen(navController)
+        composable(route = RouteList.AssetChangeSingle.description,
+            arguments = listOf(
+                navArgument("assetInfo") { type = NavType.StringType },
+            )
+        ) {backStackEntry ->
+            val assetInfoJson = backStackEntry.arguments?.getString("assetInfo") ?: ""
+            val assetInfo: AssetInfo = Json.decodeFromString(assetInfoJson)
+            AssetChangeSingleScreen(navController, assetInfo)
         }
-        composable(route = RouteList.AssetChangeBatch.description) {
-            AssetChangeBatchScreen(navController)
+        composable(route = RouteList.AssetChangeBatch.description,
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType },
+                navArgument("ids") { type = NavType.StringType },
+            )
+        ) {backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type") ?: ""
+            val assetInfoJson = backStackEntry.arguments?.getString("ids") ?: ""
+            val assetIdList: List<Int> = Json.decodeFromString(assetInfoJson)
+            AssetChangeBatchScreen(navController, type, assetIdList)
         }
         composable(route = RouteList.AssetAllocation.description) {
             AssetAllocationScreen(navController)
@@ -113,15 +131,12 @@ fun AppNavigation(start: RouteList) {
         composable(
             route = RouteList.AssetUnbindingMS.description,
             arguments = listOf(
-                navArgument("assetList") {
-                    type = NavType.StringType
-                    nullable = false
-                }
+                navArgument("assetsList") { type = NavType.StringType },
             )
         ) {backStackEntry ->
-            // 获取传递的参数
-            val assetListJson = backStackEntry.arguments?.getString("assetList") ?: ""
-            val assetList: List<AssetForList> = Json.decodeFromString(assetListJson)
+            val assetListJson = backStackEntry.arguments?.getString("assetsList") ?: ""
+            val assetList: List<AssetForGroup> = Json.decodeFromString(assetListJson)
+
             AssetUnbindingScreen(navController, assetList)
         }
     }
@@ -143,8 +158,16 @@ enum class RouteList(val description: String) {
     CreateInventory("createInventory"),
     ConfirmDetail("confirmDetail"),
     MultilevelListTest("multilevelListTest"),
-    AssetChangeSingle("assetChangeSingle"),
-    AssetChangeBatch("assetChangeBatch"),
+    AssetChangeSingle("assetChangeSingle/{assetInfo}"),
+    AssetChangeBatch("assetChangeBatch/{type}/{ids}"),
     AssetAllocation("assetAllocation"),
     AssetUnbindingMS("assetUnbindingMS/{assetsList}"),/*主从资产解绑*/
+}
+
+fun parseAssetList(json: String?): List<AssetForGroup> {
+    return if (json != null) {
+        Json.decodeFromString(json)
+    } else {
+        emptyList()
+    }
 }

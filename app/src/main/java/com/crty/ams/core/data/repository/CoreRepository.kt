@@ -10,7 +10,9 @@ import com.crty.ams.core.data.network.api.CoreApiService
 import com.crty.ams.core.data.network.model.AssetCategory
 import com.crty.ams.core.data.network.model.AssetCategoryRequest
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
+import com.crty.ams.core.data.network.model.AssetChangeRequest
 import com.crty.ams.core.data.network.model.AssetRegistrationRequest
+import com.crty.ams.core.data.network.model.AssetUnbindingMSRequest
 import com.crty.ams.core.data.network.model.Department
 import com.crty.ams.core.data.network.model.DepartmentResponse
 import com.crty.ams.core.data.network.model.Location
@@ -297,6 +299,80 @@ class CoreRepository @Inject constructor(
             )
             val response =
                 coreApiService.submitRegAsset(fullUrl, 1, token, assetRegistrationRequest)
+            Log.d("CoreRepository", "Response code: ${response.body()?.code}")
+
+            if (response.code() == 401) {
+                Log.d("CoreRepository", "Token expired")
+                return Result.success(SubmitResponse("", -1, "Token expired"))
+            } else {
+                if (response.isSuccessful) {
+                    val toResponse = SubmitResponse(
+                        data = response.body()?.data.toString(),
+                        code = response.body()?.code ?: 1,
+                        message = response.body()?.message ?: "Unknown error"
+                    )
+
+                    Log.d("CoreRepository", "submitAssetRegistration: ${toResponse.code} ")
+
+                    return Result.success(toResponse)
+                } else {
+                    return Result.success(SubmitResponse("", 1, "unknown error"))
+                }
+            }
+        } catch (e: Exception) {
+            return Result.success(SubmitResponse("", 1, "unknown error"))
+        }
+    }
+
+    // 主从资产解绑
+    suspend fun submitAssetUnbindingMS(
+        assetUnbindingMSRequest: AssetUnbindingMSRequest
+    ): Result<SubmitResponse> {
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
+        return try {
+            val fullUrl = "${url}:${port}/api/assetbusiness/asset/unbindmaster"
+            Log.d("CoreRepository-RA", "Registration Asset from: $fullUrl with token: $token")
+            val response =
+                coreApiService.submitUnbindingMS(fullUrl, 1, token, assetUnbindingMSRequest)
+            Log.d("CoreRepository", "Response code: ${response.body()?.code}")
+
+            if (response.code() == 401) {
+                Log.d("CoreRepository", "Token expired")
+                return Result.success(SubmitResponse("", -1, "Token expired"))
+            } else {
+                if (response.isSuccessful) {
+                    val toResponse = SubmitResponse(
+                        data = response.body()?.data.toString(),
+                        code = response.body()?.code ?: 1,
+                        message = response.body()?.message ?: "Unknown error"
+                    )
+
+                    Log.d("CoreRepository", "submitAssetRegistration: ${toResponse.code} ")
+
+                    return Result.success(toResponse)
+                } else {
+                    return Result.success(SubmitResponse("", 1, "unknown error"))
+                }
+            }
+        } catch (e: Exception) {
+            return Result.success(SubmitResponse("", 1, "unknown error"))
+        }
+    }
+
+    // 单个/批量资产变更
+    suspend fun submitAssetChange(
+        assetChangeRequest: AssetChangeRequest
+    ): Result<SubmitResponse> {
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
+        return try {
+            val fullUrl = "${url}:${port}/api/assetbusiness/asset/change"
+            Log.d("CoreRepository-RA", "Registration Asset from: $fullUrl with token: $token")
+            val response =
+                coreApiService.submitAssetChange(fullUrl, 1, token, assetChangeRequest)
             Log.d("CoreRepository", "Response code: ${response.body()?.code}")
 
             if (response.code() == 401) {

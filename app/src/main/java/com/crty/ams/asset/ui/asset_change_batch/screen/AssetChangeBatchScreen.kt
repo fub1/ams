@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.view.MotionEvent
 import android.widget.DatePicker
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +17,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,7 +28,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -40,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.R
 import com.crty.ams.asset.ui.asset_change_batch.viewmodel.AssetChangeBatchViewModel
+import com.crty.ams.asset.ui.asset_change_single.screen.ChangeSuccessPopup
 import com.crty.ams.core.ui.component.compose.single_field_roller.SingleFieldRollerScreen
 import com.crty.ams.core.ui.compose.picker.AttributePage
 import java.util.Calendar
@@ -47,7 +55,10 @@ import java.util.Calendar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun AssetChangeBatchScreen(navController: NavHostController, viewModel: AssetChangeBatchViewModel = hiltViewModel()) {
+fun AssetChangeBatchScreen(navController: NavHostController,
+                           type: String,
+                           ids: List<Int>,
+                           viewModel: AssetChangeBatchViewModel = hiltViewModel()) {
     val topBar = stringResource(R.string.asset_screen_assetChangeBatchScreen_topBar)
 
     val context = LocalContext.current
@@ -70,6 +81,18 @@ fun AssetChangeBatchScreen(navController: NavHostController, viewModel: AssetCha
     val showSheet = remember { mutableStateOf(false) }
     val selectedAttributeType = remember { mutableStateOf("") }
 
+    // 监听 ViewModel 中的弹窗显示状态
+    val showSuccessPopup by viewModel.showSuccessPopup
+    val isLoading by viewModel.isLoading.collectAsState()
+    val isTimeout by viewModel.isTimeout.collectAsState()
+    val isFailed by viewModel.isFailed.collectAsState()
+    val failedMessage by viewModel.failedMessage.collectAsState()
+    val isError by viewModel.isError.collectAsState()
+
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchData(type, ids)
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -152,7 +175,7 @@ fun AssetChangeBatchScreen(navController: NavHostController, viewModel: AssetCha
                             if (it.action == MotionEvent.ACTION_DOWN) {
                                 when(textFieldValue){
                                     "资产分类" -> {
-                                        selectedAttributeType.value = "批量修改资产分类"
+                                        selectedAttributeType.value = "资产分类"
                                         showSheet.value = true
                                     }
                                     "采购日期" -> datePickerDialog.show()
@@ -175,7 +198,7 @@ fun AssetChangeBatchScreen(navController: NavHostController, viewModel: AssetCha
                 Button(
                     onClick = {
                         /* 跳转到批量修改页面 */
-
+                        viewModel.submit()
 
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -194,15 +217,72 @@ fun AssetChangeBatchScreen(navController: NavHostController, viewModel: AssetCha
             }
             // Display the ModalBottomSheet
             if (showSheet.value) {
-//                AttributePage(
-//                    attributeType = selectedAttributeType.value,
-//                    showSheet = showSheet,
-//                    navController
-//                )
+                AttributePage(
+                    attributeType = selectedAttributeType.value,
+                    showSheet = showSheet,
+                    navController,
+                    onDismiss = { data, number ->
+                        // 回传数据给 AssetRegisterScreen 的 ViewModel
+                        viewModel.updateAttributeValueId(data, number)
+                        showSheet.value = false // 关闭 ModalBottomSheet
+                    }
+                )
+            }
+
+            // 显示弹窗
+            if (showSuccessPopup) {
+                ChangeSuccessPopup()
             }
 
         }
 
+// 加载动画
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()  // 显示加载动画
+            }
+        }
+        if (isTimeout) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissTimeoutDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissTimeoutDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("请求超时") },
+                text = { Text("请求登记接口超时，请重试。") }
+            )
+        }
+        if (isFailed) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissFieldDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissFieldDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("登记失败") },
+                text = { Text(failedMessage) }
+            )
+        }
+        if (isError) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissErrorDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissErrorDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("操作异常") },
+                text = { Text("登记过程中出现异常。") }
+            )
+        }
 
     }
 }

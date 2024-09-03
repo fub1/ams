@@ -25,6 +25,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import com.crty.ams.core.ui.theme.primaryLight
 import androidx.compose.material3.ButtonDefaults
+import com.crty.ams.asset.data.network.model.AssetForGroup
+import com.crty.ams.asset.data.network.model.AssetForList
+import com.crty.ams.core.data.model.AssetInfo
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,13 +109,31 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
         }
         7 -> {
         println("help button clicked")
-        navController.navigate("assetChangeSingle"){
+            val assetInfo = AssetInfo(
+                asset_id = 1,
+                asset_code = "code123",
+                asset_name = "name456",
+                asset_category = "cate123",
+                asset_category_id = 1,
+                brand = "brandbbb",
+                model = "modelmodel",
+                sn = "",
+                supplier = "",
+                purchase_date = "",
+                price = "0",
+                remark = "rerere"
+            )
+            val assetListJson = Json.encodeToString(assetInfo)
+        navController.navigate("assetChangeSingle/$assetListJson"){
             popUpTo("home") { inclusive = true }
         }
     }
         8 -> {
             println("batch button clicked")
-            navController.navigate("assetChangeBatch") {
+            val newAttributesList = mutableListOf<Int>()
+            newAttributesList.add(1)
+            newAttributesList.add(2)
+            navController.navigate("assetChangeBatch/批量/$newAttributesList") {
                 popUpTo("home") { inclusive = true }
             }
         }
@@ -121,8 +144,16 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
             }
         }
         10 -> {
+            val rawAssets = listOf(
+                AssetForGroup(id = 1, name = "主资产1", code = "A001", department = "部门A", parentId = 0),
+                AssetForGroup(id = 2, name = "子资产1-1", code = "A002", department = "部门A", parentId = 1),
+                AssetForGroup(id = 3, name = "子资产1-2", code = "A003", department = "部门A", parentId = 1),
+//                AssetForGroup(id = 4, name = "主资产2", code = "A004", department = "部门B", parentId = 0),
+//                AssetForGroup(id = 5, name = "子资产2-1", code = "A005", department = "部门B", parentId = 4)
+        )
+            val assetListJson = Json.encodeToString(rawAssets)
             println("unbinding button clicked")
-            navController.navigate("assetUnbindingMS/12") {
+            navController.navigate("assetUnbindingMS/$assetListJson") {
                 popUpTo("home") { inclusive = true }
             }
         }

@@ -53,6 +53,26 @@ data class AssetRegistrationRequest(
     @SerializedName("barcode") val barcode: String? = null
 )
 
+// 主从资产解绑请求
+data class AssetUnbindingMSRequest(
+    @SerializedName("asset_ids") val ids: List<Int>,
+    @SerializedName("flag") val flag: Int,
+)
+
+//单个/批量资产变更请求
+data class AssetChangeRequest(
+    @SerializedName("asset_id") val ids: List<Int>,
+    @SerializedName("asset_category_id") val categoryId: Int,
+    @SerializedName("asset_name") val name: String,
+    @SerializedName("brand") val brand: String,
+    @SerializedName("model") val model: String,
+    @SerializedName("price") val price: Double,
+    @SerializedName("purchase_date") val date: String,
+    @SerializedName("sn") val sn: String,
+    @SerializedName("supplier") val supplier: String,
+    @SerializedName("remark") val remark: String,
+)
+
 
 
 

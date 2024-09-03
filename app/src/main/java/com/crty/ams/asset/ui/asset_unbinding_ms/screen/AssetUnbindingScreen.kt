@@ -2,8 +2,10 @@ package com.crty.ams.asset.ui.asset_unbinding_ms.screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,9 +24,11 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -33,6 +37,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,13 +48,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.crty.ams.R
+import com.crty.ams.asset.data.network.model.AssetForGroup
 import com.crty.ams.asset.data.network.model.AssetForList
 import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
 import com.crty.ams.asset.ui.asset_unbinding_ms.viewmodel.AssetUnbindingViewModel
@@ -60,7 +73,7 @@ import com.crty.ams.core.ui.theme.AmsTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssetUnbindingScreen(navController: NavHostController,
-                         asset: List<AssetForList>,
+                         asset: List<AssetForGroup>,
                          viewModel: AssetUnbindingViewModel = hiltViewModel()) {
     val topBar = stringResource(R.string.asset_screen_assetUnbindingScreen_topBar_MS)
 
@@ -72,10 +85,18 @@ fun AssetUnbindingScreen(navController: NavHostController,
     val assets by viewModel.assets.collectAsState()
 
     val selectedAssets by viewModel.selectedSubAssets.collectAsState()
+    // 监听 ViewModel 中的弹窗显示状态
+    val showSuccessPopup by viewModel.showSuccessPopup
+
+    val isLoading by viewModel.isLoading.collectAsState()
+    val isTimeout by viewModel.isTimeout.collectAsState()
+    val isFailed by viewModel.isFailed.collectAsState()
+    val failedMessage by viewModel.failedMessage.collectAsState()
+    val isError by viewModel.isError.collectAsState()
 
     //副作用获取要解绑的组资产信息
     LaunchedEffect(Unit) {
-        viewModel.fetchAllAttributes()
+        viewModel.fetchAllAttributes(asset)
     }
 
     Scaffold(
@@ -138,9 +159,12 @@ fun AssetUnbindingScreen(navController: NavHostController,
                 Button(
                     onClick = {
                     /*TODO*/
+                        val newAttributesList = mutableListOf<Int>()
                         selectedAssets.forEach { asset ->
                             println("选中的资产: ${asset.id} ${asset.name} (${asset.code})")
+                            newAttributesList.add(asset.id)
                         }
+                        viewModel.unbindPart(newAttributesList)
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -148,11 +172,61 @@ fun AssetUnbindingScreen(navController: NavHostController,
                 ) {
                     Text(text = "部分解绑")
                 }
-            }
 
+                // 显示弹窗
+                if (showSuccessPopup) {
+                    SuccessPopup()
+                }
+            }
         }
 
-
+// 加载动画
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()  // 显示加载动画
+            }
+        }
+        if (isTimeout) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissTimeoutDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissTimeoutDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("请求超时") },
+                text = { Text("请求登记接口超时，请重试。") }
+            )
+        }
+        if (isFailed) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissFieldDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissFieldDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("登记失败") },
+                text = { Text(failedMessage) }
+            )
+        }
+        if (isError) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissErrorDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissErrorDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("操作异常") },
+                text = { Text("登记过程中出现异常。") }
+            )
+        }
     }
 }
 
@@ -221,10 +295,52 @@ fun AssetItem(asset: AssetForList, viewModel: AssetUnbindingViewModel, selectedA
             }
         }
     }
+}
 
-    // 将选中的子资产传递给 ViewModel
-//    LaunchedEffect(selectedSubAssets) {
-//        viewModel.updateSelectedSubAssets(selectedSubAssets)
-//        println("修改勾选框的值")
-//    }
+@Composable
+fun SuccessPopup() {
+    Dialog(
+        onDismissRequest = {},
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false // 允许我们自定义 Dialog 的宽度
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0x15000000)) // 设置 Dialog 的半透明背景
+                .padding(32.dp), // 设置内容与边缘的距离
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(Color.White, shape = MaterialTheme.shapes.medium)
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    // Lottie 动画
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.success))
+                    val progress by animateLottieCompositionAsState(
+                        composition = composition,
+                        iterations = 1
+                    )
+                    LottieAnimation(
+                        composition = composition,
+                        progress = progress,
+                        modifier = Modifier.size(150.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 显示 "注册成功" 的文本
+                    Text(text = "解绑成功", style = MaterialTheme.typography.titleMedium)
+                }
+            }
+        }
+    }
 }

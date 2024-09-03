@@ -1,24 +1,42 @@
 package com.crty.ams.asset.ui.asset_unbinding_ms.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.crty.ams.asset.data.network.model.AssetForGroup
 import com.crty.ams.asset.data.network.model.AssetForList
+import com.crty.ams.core.data.model.AssetInfo
+import com.crty.ams.core.data.network.model.AssetUnbindingMSRequest
+import com.crty.ams.core.data.repository.CoreRepository
+import com.crty.ams.core.ui.compose.picker.AttributeEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 @HiltViewModel
 class AssetUnbindingViewModel @Inject constructor(
     // Inject your repository or use case here
+    private val coreRepository: CoreRepository
 ) : ViewModel() {
-    private val _assetId = MutableLiveData<Int>()
-    val assetId: LiveData<Int> = _assetId
+    // 控制动画和文字显示的状态
+    val showSuccessPopup = mutableStateOf(false)
 
-    fun setAssetId(id: Int){
-        _assetId.value = id
-    }
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+    private val _isTimeout  = MutableStateFlow(false)
+    val isTimeout: StateFlow<Boolean> = _isTimeout
+    private val _isFailed  = MutableStateFlow(false)
+    val isFailed: StateFlow<Boolean> = _isFailed
+    private val _failedMessage  = MutableStateFlow("")
+    val failedMessage: StateFlow<String> = _failedMessage
+    private val _isError = MutableStateFlow(false)
+    val isError: StateFlow<Boolean> = _isError
 
     private val _masterId = MutableLiveData<Int>()
 
@@ -27,56 +45,36 @@ class AssetUnbindingViewModel @Inject constructor(
     val selectedSubAssets: StateFlow<Set<AssetForList>> = _selectedSubAssets
 
 
-
-//    private val _assets = MutableStateFlow<List<AssetForList>>(listOf(
-//        AssetForList(1, "主要资产 1", "PA1", "部门A", hasSubAssets = true, subAssets = listOf(
-//            AssetForList(101, "子资产 1", "SA1", "部门A1"),
-//            AssetForList(102, "子资产 2", "SA2", "部门A2"),
-//            AssetForList(103, "子资产 3", "SA3", "部门A3")
-//        )),
-//        AssetForList(2, "主要资产 2", "PA2", "部门B"),
-//        AssetForList(3, "主要资产 3", "PA3", "部门C", hasSubAssets = true, subAssets = listOf(
-//            AssetForList(201, "子资产 4", "SA4", "部门C1"),
-//            AssetForList(202, "子资产 5", "SA5", "部门C2")
-//        )),
-//        AssetForList(4, "主要资产 4", "PA4", "部门D"),
-//        AssetForList(5, "主要资产 5", "PA5", "部门E", hasSubAssets = true, subAssets = listOf(
-//            AssetForList(301, "子资产 6", "SA6", "部门E1"),
-//            AssetForList(302, "子资产 7", "SA7", "部门E2"),
-//            AssetForList(303, "子资产 8", "SA8", "部门E3"),
-//            AssetForList(304, "子资产 9", "SA9", "部门E4")
-//        ))
-//    ))
-//
-//    val assets: StateFlow<List<AssetForList>> = _assets
-
     private val _assets = MutableStateFlow<List<AssetForList>>(emptyList())
     val assets: StateFlow<List<AssetForList>> = _assets
 
-    init {
 
+    fun fetchAllAttributes(assets: List<AssetForGroup>){
+        val newAttributesList = mutableListOf<AssetForList>()
+        assets.forEach { attributeData ->
+            // 假设 attributeData 是你想要转换为 AttributeEntity 的数据类型
+            val attributeEntity = AssetForList(
+                id = attributeData.id,
+                name = attributeData.name,
+                code = attributeData.code,
+                department = attributeData.department,
+                parentId = attributeData.parentId
+            )
+            // 将新创建的 AttributeEntity 对象添加到列表中
+            newAttributesList.add(attributeEntity)
+        }
+        parseAssets(newAttributesList)
     }
 
-    fun fetchAllAttributes(){
-        parseAssets()
-    }
-
-    private fun parseAssets() {
-        val rawAssets = listOf(
-            AssetForList(id = 1, name = "主资产1", code = "A001", department = "部门A", parentId = 0),
-            AssetForList(id = 2, name = "子资产1-1", code = "A002", department = "部门A", parentId = 1),
-            AssetForList(id = 3, name = "子资产1-2", code = "A003", department = "部门A", parentId = 1),
-            AssetForList(id = 4, name = "主资产2", code = "A004", department = "部门B", parentId = 0),
-            AssetForList(id = 5, name = "子资产2-1", code = "A005", department = "部门B", parentId = 4)
-        )
+    private fun parseAssets(assets: List<AssetForList>) {
 
         val assetMap = mutableMapOf<Int, AssetForList>()
 
-        rawAssets.forEach { asset ->
+        assets.forEach { asset ->
             assetMap[asset.id] = asset.copy(subAssetsForCheck = mutableListOf())
         }
 
-        rawAssets.forEach { asset ->
+        assets.forEach { asset ->
             asset.parentId.takeIf { it != 0 }?.let { parentId ->
                 assetMap[parentId]?.hasSubAssets = true
                 assetMap[parentId]?.subAssetsForCheck?.add(asset)
@@ -103,5 +101,81 @@ class AssetUnbindingViewModel @Inject constructor(
 
     fun unbindAll(){
         println("全部解绑：${_masterId.value}")
+        val newAttributesList = mutableListOf<Int>()
+        _masterId.value?.let { newAttributesList.add(it) }
+        val a = AssetUnbindingMSRequest(
+            newAttributesList,
+            0
+        )
+        sendRequest(a)
+    }
+    fun unbindPart(ids: List<Int>){
+        ids.forEach { id->
+            println("部分解绑：$id")
+        }
+        val a = AssetUnbindingMSRequest(
+            ids,
+            1
+        )
+    }
+
+    private fun sendRequest(assetUnbindingMSRequest: AssetUnbindingMSRequest){
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                // 设置超时时间为5秒
+                val result = withTimeoutOrNull(22000) {
+//                    delay(10000)
+                    coreRepository.submitAssetUnbindingMS(assetUnbindingMSRequest)
+                }
+                _isLoading.value = false
+
+                if (result == null) {
+                    // 超时逻辑处理
+                    // 显示超时提示信息
+                    _isTimeout.value = true
+                } else {
+                    // 正常处理
+                    if (result.getOrNull()?.code == 0){
+                        performOperation()
+
+                        //处理跳转
+
+                    }else if (result.getOrNull()?.code == 1){
+                        _isFailed.value = true
+                        _failedMessage.value = result.getOrNull()?.message.toString()
+                    }else if (result.getOrNull()?.code == -1){
+                        //退出登录
+
+                    }
+
+                }
+            } catch (e: Exception) {
+                // 处理其他异常
+                _isLoading.value = false
+                _isError.value = true
+            }
+        }
+    }
+
+    // 模拟执行操作的方法
+    fun performOperation() {
+        viewModelScope.launch {
+            // 显示弹窗
+            showSuccessPopup.value = true
+            // 延迟2秒后隐藏弹窗
+            delay(2000)
+            showSuccessPopup.value = false
+        }
+    }
+
+    fun dismissTimeoutDialog() {
+        _isTimeout.value = false
+    }
+    fun dismissFieldDialog() {
+        _isFailed.value = false
+    }
+    fun dismissErrorDialog() {
+        _isError.value = false
     }
 }

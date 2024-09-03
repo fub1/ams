@@ -128,7 +128,7 @@ class AssetRegisterViewModel @Inject constructor(
             sn = _asset.value.sn,
             supplier = _asset.value.supplier,
             purchaseDate = _asset.value.purchase_date,
-            price = _asset.value.price.toDouble(),
+            price = _asset.value.price?.toDouble(),
             remark = _asset.value.remark,
             rfidCodeTid = _tid.value,
             rfidCodeEpc = _epc.value,
@@ -138,7 +138,7 @@ class AssetRegisterViewModel @Inject constructor(
             try {
                 _isLoading.value = true
                 // 设置超时时间为5秒
-                val result = withTimeoutOrNull(5000) {
+                val result = withTimeoutOrNull(22000) {
 //                    delay(10000)
                     coreRepository.submitAssetRegistration(a)
                 }

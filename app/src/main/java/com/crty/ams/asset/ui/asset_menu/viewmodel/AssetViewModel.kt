@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.YoutubeSearchedFor
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.crty.ams.asset.data.network.model.AssetForGroup
 
 
 data class MenuItem(val id: Int, val title: String, val icon: ImageVector)
@@ -45,4 +46,5 @@ class AssetViewModel @Inject constructor(
     )
 
     val menuItems: SnapshotStateList<MenuItem> get() = _menuItems
+
 }

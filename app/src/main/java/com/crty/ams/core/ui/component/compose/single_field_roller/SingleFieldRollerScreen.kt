@@ -74,7 +74,7 @@ fun SingleFieldRollerScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(text = "用户名", modifier = Modifier.padding(bottom = 8.dp))
+                Text(text = "属性名", modifier = Modifier.padding(bottom = 8.dp))
 //                Text(text = "用户编号", modifier = Modifier.padding(bottom = 8.dp))
             }
 
