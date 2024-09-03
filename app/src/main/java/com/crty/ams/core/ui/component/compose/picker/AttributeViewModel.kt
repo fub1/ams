@@ -157,6 +157,7 @@ open class AttributeViewModel  @Inject constructor(
     }
 
     fun onFirstLevelSelected(id: Int) {
+        Log.i("AttributeViewModel", "onFirstLevelSelected: $id")
 
         _state.value = _state.value.copy(
             secondLevelAttributes = _allAttributes.filter { it.parentId == id },
@@ -168,6 +169,7 @@ open class AttributeViewModel  @Inject constructor(
     }
 
     fun onSecondLevelSelected(id: Int) {
+        Log.i("AttributeViewModel", "onSecondLevelSelected: $id")
         selectedThirdLevelId.value = null
         _state.value = _state.value.copy(
             selectedSecondLevelId = _allAttributes.find { it.id == id }?.id,

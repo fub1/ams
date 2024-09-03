@@ -49,7 +49,7 @@ import com.crty.ams.R
 import com.crty.ams.asset.ui.asset_change_batch.viewmodel.AssetChangeBatchViewModel
 import com.crty.ams.asset.ui.asset_change_single.screen.ChangeSuccessPopup
 import com.crty.ams.core.ui.component.compose.single_field_roller.SingleFieldRollerScreen
-import com.crty.ams.core.ui.compose.picker.AttributePage
+import com.crty.ams.core.ui.component.compose.picker.AttributePage
 import java.util.Calendar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

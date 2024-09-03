@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.view.MotionEvent
 import android.widget.DatePicker
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,10 +62,8 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.crty.ams.R
 import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
-import com.crty.ams.asset.ui.asset_unbinding_ms.viewmodel.AssetUnbindingViewModel
 import com.crty.ams.core.ui.compose.camera2.rememberImagePainter
-import com.crty.ams.core.ui.compose.picker.AttributePage
-import com.crty.ams.core.ui.compose.picker.AttributeViewModel
+import com.crty.ams.core.ui.component.compose.picker.AttributePage
 import com.crty.ams.core.ui.theme.AmsTheme
 import java.util.Calendar
 

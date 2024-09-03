@@ -5,14 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.crty.ams.asset.data.network.model.AssetForGroup
-import com.crty.ams.asset.data.network.model.AssetForList
 import com.crty.ams.asset.ui.asset_allocation.screen.AssetAllocationScreen
 import com.crty.ams.asset.ui.asset_change_batch.screen.AssetChangeBatchScreen
 import com.crty.ams.asset.ui.asset_change_single.screen.AssetChangeSingleScreen
@@ -28,12 +26,8 @@ import com.crty.ams.core.ui.screen.LoginSettingsScreen
 import com.crty.ams.asset.ui.asset_inventory_detail_confirm.screen.ConfirmDetailScreen
 import com.crty.ams.asset.ui.asset_inventory_detail_filter.screen.InventoryDetailFilterScreen
 import com.crty.ams.asset.ui.asset_inventory_list.screen.InventoryListScreen
-import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
 import com.crty.ams.asset.ui.asset_unbinding_ms.screen.AssetUnbindingScreen
-import com.crty.ams.asset.ui.asset_unbinding_ms.viewmodel.AssetUnbindingViewModel
 import com.crty.ams.core.data.model.AssetInfo
-import com.crty.ams.core.ui.compose.picker.AttributePage
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropScreen
 import org.imaginativeworld.whynotcompose.ui.screens.tutorial.captureimageandcrop.CaptureImageAndCropViewModel
