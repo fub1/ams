@@ -35,6 +35,7 @@ plugins {
     //for datastore-protobuf
     alias(libs.plugins.google.protobuf)
 
+
 //    kotlin("plugin.serialization") version "1.8.0" // 请根据实际的 Kotlin 版本调整 240819
 
 }
@@ -141,6 +142,7 @@ dependencies {
 //    implementation(libs.timber) // 照相功能用
     implementation(libs.coil.compose)
     implementation(libs.lottie.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     // Libs Group1: AndroidX.core
     // https://developer.android.com/jetpack/androidx/releases/core

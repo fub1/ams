@@ -59,7 +59,9 @@ import com.crty.ams.core.ui.theme.AmsTheme
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssetUnbindingScreen(navController: NavHostController, viewModel: AssetUnbindingViewModel) {
+fun AssetUnbindingScreen(navController: NavHostController,
+                         asset: List<AssetForList>,
+                         viewModel: AssetUnbindingViewModel = hiltViewModel()) {
     val topBar = stringResource(R.string.asset_screen_assetUnbindingScreen_topBar_MS)
 
 // Get the context here
@@ -70,6 +72,11 @@ fun AssetUnbindingScreen(navController: NavHostController, viewModel: AssetUnbin
     val assets by viewModel.assets.collectAsState()
 
     val selectedAssets by viewModel.selectedSubAssets.collectAsState()
+
+    //副作用获取要解绑的组资产信息
+    LaunchedEffect(Unit) {
+        viewModel.fetchAllAttributes()
+    }
 
     Scaffold(
         topBar = {

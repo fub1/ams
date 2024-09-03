@@ -37,6 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -73,7 +74,13 @@ import java.util.Calendar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegisterViewModel) {
+fun AssetRegisterScreen(
+    navController: NavHostController,
+    tid: String,
+    epc: String,
+    barcode: String,
+    viewModel: AssetRegisterViewModel = hiltViewModel(),
+    ) {
     val topBar = stringResource(R.string.asset_screen_assetRegisterScreen_topBar)
 
     val asset by viewModel.asset.collectAsState()
@@ -128,7 +135,9 @@ fun AssetRegisterScreen(navController: NavHostController, viewModel: AssetRegist
     // 监听 ViewModel 中的弹窗显示状态
     val showSuccessPopup by viewModel.showSuccessPopup
 
-
+    LaunchedEffect(Unit) {
+        viewModel.setEpcAndBarcode(tid, epc, barcode)
+    }
 
     fun submit(){
         var isFill = true

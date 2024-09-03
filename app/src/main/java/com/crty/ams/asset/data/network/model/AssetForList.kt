@@ -1,5 +1,8 @@
 package com.crty.ams.asset.data.network.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class AssetForList(
     val id: Int,
     val name: String,

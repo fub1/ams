@@ -54,6 +54,10 @@ class AssetUnbindingViewModel @Inject constructor(
     val assets: StateFlow<List<AssetForList>> = _assets
 
     init {
+
+    }
+
+    fun fetchAllAttributes(){
         parseAssets()
     }
 
