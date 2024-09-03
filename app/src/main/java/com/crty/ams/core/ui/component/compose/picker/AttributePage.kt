@@ -1,4 +1,4 @@
-package com.crty.ams.core.ui.compose.picker
+package com.crty.ams.core.ui.component.compose.picker
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
@@ -18,11 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.crty.ams.asset.ui.asset_allocation.viewmodel.AssetAllocationViewModel
-import com.crty.ams.asset.ui.asset_change_batch.viewmodel.AssetChangeBatchViewModel
-import com.crty.ams.asset.ui.asset_change_single.viewmodel.AssetChangeSingleViewModel
-import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
-import com.crty.ams.asset.ui.asset_inventory_detail_filter.viewmodel.InventoryDetailFilterViewModel
+import com.crty.ams.core.ui.compose.picker.AddAttributeWithCodeSkeleton
+import com.crty.ams.core.ui.compose.picker.AttributeViewModel
+import com.crty.ams.core.ui.compose.picker.LoadingContainer
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,6 +131,10 @@ fun AttributePage(
                     attributeType = attributeType,
                     firstLevelAttribute = state.firstLevelAttributes,
                     secondLevelAttribute = state.secondLevelAttributes,
+                    firstLevelSelectId = mutableStateOf(state.selectedFirstLevelId),
+                    secondLevelSelectId = mutableStateOf(state.selectedSecondLevelId),
+                    onFirstLevelSelect = { viewModel.onFirstLevelSelected(it) },
+                    onSecondLevelSelect = { viewModel.onSecondLevelSelected(it) },
                     goBack = { viewModel.toAttributeSelectMode() },
                     addAttribute = { attrName, attrCode ->
                         viewModel.addAttribute(attrName, attrCode)

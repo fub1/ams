@@ -34,9 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.R
-import com.crty.ams.core.ui.compose.picker.AttributePage
 import com.crty.ams.core.ui.compose.single_roller.SingleRollerScreen
-import com.crty.ams.core.ui.compose.single_roller.SingleRollerViewModel
 import com.crty.ams.asset.ui.asset_inventory_detail_filter.viewmodel.InventoryDetailFilterViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

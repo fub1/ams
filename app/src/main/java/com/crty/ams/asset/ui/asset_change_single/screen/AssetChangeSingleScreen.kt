@@ -57,8 +57,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.crty.ams.R
 import com.crty.ams.asset.ui.asset_change_single.viewmodel.AssetChangeSingleViewModel
 import com.crty.ams.core.data.model.AssetInfo
-import com.crty.ams.core.ui.compose.picker.AttributePage
-import com.crty.ams.core.ui.compose.picker.AttributeViewModel
+import com.crty.ams.core.ui.component.compose.picker.AttributePage
 import com.crty.ams.core.ui.theme.AmsTheme
 import java.util.Calendar
 

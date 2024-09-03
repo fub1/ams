@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.crty.ams.core.ui.component.compose.picker.ExposedDropdownMenu
 
 
 // 注册属性页面的骨架
@@ -32,6 +33,10 @@ fun AddAttributeWithCodeSkeleton(
     attributeType: String = "",
     firstLevelAttribute: List<AttributeEntity>? = listOf(),
     secondLevelAttribute: List<AttributeEntity>? = listOf(), //可以为空
+    firstLevelSelectId: MutableState<Int?> = mutableStateOf(null),
+    secondLevelSelectId: MutableState<Int?> = mutableStateOf(null),
+    onFirstLevelSelect: (Int) -> Unit = {},
+    onSecondLevelSelect: (Int) -> Unit = {},
     goBack: () -> Unit = {},
     addAttribute: (attrName: String, attrCode: String) -> Unit = { _, _ -> }
     ) {
@@ -39,11 +44,8 @@ fun AddAttributeWithCodeSkeleton(
     val attrName = rememberSaveable{ mutableStateOf("") } // 输入框的值
     val attrCode = rememberSaveable{ mutableStateOf("") } // 输入框的值
 
-    val selectedFirstLevelId = rememberSaveable{ mutableStateOf<Int?>(null) }   // 一级属性id,int或null
-    val selectedSecondLevelId = rememberSaveable{ mutableStateOf<Int?>(null) } // 二级属性id,int或null
-
-    val firstLevelSelectedOption = firstLevelAttribute?.find { it.id == selectedFirstLevelId.value }?.name ?: ""
-    val secondLevelSelectedOption = secondLevelAttribute?.find { it.id == selectedSecondLevelId.value }?.name ?: ""
+    val firstLevelSelectedOption = firstLevelAttribute?.find { it.id == firstLevelSelectId.value }?.name ?: ""
+    val secondLevelSelectedOption = secondLevelAttribute?.find { it.id == secondLevelSelectId.value }?.name ?: ""
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "正在注册属性 - $attributeType 第${editLevel.intValue}级", modifier = Modifier.padding(bottom = 16.dp))
@@ -88,7 +90,8 @@ fun AddAttributeWithCodeSkeleton(
                     options = firstLevelAttribute,
                     selectedOption = firstLevelSelectedOption,
                     onOptionSelected = {
-                        selectedFirstLevelId.value = it
+                        firstLevelSelectId.value = it
+                        onFirstLevelSelect(it)
                     }
                 )
                 EditArea(attrName, attrCode)
@@ -99,7 +102,8 @@ fun AddAttributeWithCodeSkeleton(
                     options = firstLevelAttribute,
                     selectedOption = firstLevelSelectedOption,
                     onOptionSelected = {
-                        selectedFirstLevelId.value = it
+                        firstLevelSelectId.value = it
+                        onFirstLevelSelect(it)
                     }
                 )
                 ExposedDropdownMenu(
@@ -107,7 +111,8 @@ fun AddAttributeWithCodeSkeleton(
                     options = secondLevelAttribute!!,
                     selectedOption = secondLevelSelectedOption,
                     onOptionSelected = {
-                        selectedSecondLevelId.value = it
+                        secondLevelSelectId.value = it
+                        onSecondLevelSelect(it)
                     }
                 )
                 EditArea(attrName, attrCode)
