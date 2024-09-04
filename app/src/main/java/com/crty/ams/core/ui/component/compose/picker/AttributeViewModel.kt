@@ -139,7 +139,10 @@ open class AttributeViewModel  @Inject constructor(
         _state.value = _state.value.copy(
             mode = AttributeViewMode.CREATE,
             secondLevelAttributes = emptyList(),
-            thirdLevelAttributes = emptyList()
+            thirdLevelAttributes = emptyList(),
+            selectedFirstLevelId = null,
+            selectedSecondLevelId = null,
+            selectedThirdLevelId = null,
         )
     }
 
@@ -148,7 +151,10 @@ open class AttributeViewModel  @Inject constructor(
         _state.value = _state.value.copy(
             mode = AttributeViewMode.SELECT,
             secondLevelAttributes = emptyList(),
-            thirdLevelAttributes = emptyList()
+            thirdLevelAttributes = emptyList(),
+            selectedFirstLevelId = null,
+            selectedSecondLevelId = null,
+            selectedThirdLevelId = null,
         )
     }
 
