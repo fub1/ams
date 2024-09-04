@@ -38,6 +38,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -82,6 +83,20 @@ fun AssetChangeSingleScreen(navController: NavHostController,
     val price = asset.price
     val remark = asset.remark
 
+
+    var codeError by remember { mutableStateOf(false) }
+    var codeLabel by remember { mutableStateOf("* 请输入资产代码") }
+    var nameError by remember { mutableStateOf(false) }
+    var nameLabel by remember { mutableStateOf("* 请输入资产名称") }
+    var categoryError by remember { mutableStateOf(false) }
+    var categoryLabel by remember { mutableStateOf("* 请选择资产分类") }
+    var brandError by remember { mutableStateOf(false) }
+    var brandLabel by remember { mutableStateOf("* 请输入品牌") }
+    var modelError by remember { mutableStateOf(false) }
+    var modelLabel by remember { mutableStateOf("* 请输入型号") }
+    var priceError by remember { mutableStateOf(false) }
+    var priceLabel by remember { mutableStateOf("请输入价格") }
+
     // Get the context here
     val context = LocalContext.current
 
@@ -110,6 +125,51 @@ fun AssetChangeSingleScreen(navController: NavHostController,
         viewModel.fetchData(assetInfo)
     }
 
+    fun submit(){
+        var isFill = true
+
+        if (assetCode.isEmpty()){
+            codeError = true
+            codeLabel = "资产代码不能为空"
+            isFill = false
+        }
+        if (assetName.isEmpty()){
+            nameError = true
+            nameLabel = "资产名称不能为空"
+            isFill = false
+        }
+        if (assetCategory.isEmpty()){
+            categoryError = true
+            categoryLabel = "资产分类不能为空"
+            isFill = false
+        }
+        if (brand.isEmpty()){
+            brandError = true
+            brandLabel = "品牌不能为空"
+            isFill = false
+        }
+        if (model.isEmpty()){
+            modelError = true
+            modelLabel = "型号不能为空"
+            isFill = false
+        }
+        if (price.isEmpty()){
+            viewModel.updateAssetField { it.copy(asset_category = "0") }
+        }else{
+            if (!isNumeric(price)){
+                priceError = true
+                priceLabel = "请输入数字"
+                isFill = false
+            }
+        }
+
+        if (isFill){
+            viewModel.submit()
+        }
+
+
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -128,7 +188,8 @@ fun AssetChangeSingleScreen(navController: NavHostController,
             AmsTheme{
                 FloatingActionButton(onClick = {
                     // Handle FAB click action here
-                    viewModel.submit()
+//                    viewModel.submit()
+                    submit()
                 }) {
                     Icon(Icons.Default.Check, contentDescription = "Submit")
                 }
@@ -161,7 +222,7 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
             TextFieldWithLabel(
                 text = "资产代码",
-                label = "请输入资产代码",
+                label = codeLabel,
                 value = assetCode,
                 onValueChange = { newCode ->
                     viewModel.updateAssetField { it.copy(asset_code = newCode) }
@@ -171,11 +232,12 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
                 },
                 true,
-                enable = false
+                enable = false,
+                isError = codeError
             )
             TextFieldWithLabel(
                 text = "资产名称",
-                label = "请输入资产名称",
+                label = nameLabel,
                 value = assetName,
                 onValueChange = { newCode ->
                     viewModel.updateAssetField { it.copy(asset_name = newCode) }
@@ -185,11 +247,12 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
                 },
                 true,
-                enable = true
+                enable = true,
+                isError = nameError
             )
             TextFieldWithLabel(
                 text = "资产分类",
-                label = "请选择资产分类",
+                label = categoryLabel,
                 value = assetCategory,
                 onValueChange = { newCode ->
                     viewModel.updateAssetField { it.copy(asset_category = newCode) }
@@ -200,11 +263,12 @@ fun AssetChangeSingleScreen(navController: NavHostController,
                     showSheet.value = true
                 },
                 true,
-                enable = true
+                enable = true,
+                categoryError
             )
             TextFieldWithLabel(
                 text = "品牌",
-                label = "请输入品牌",
+                label = brandLabel,
                 value = brand,
                 onValueChange = { newCode ->
                     viewModel.updateAssetField { it.copy(brand = newCode) }
@@ -214,11 +278,12 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
                 },
                 true,
-                enable = true
+                enable = true,
+                brandError
             )
             TextFieldWithLabel(
                 text = "型号",
-                label = "请输入型号",
+                label = modelLabel,
                 value = model,
                 onValueChange = { newCode ->
                     viewModel.updateAssetField { it.copy(model = newCode) }
@@ -228,7 +293,8 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
                 },
                 true,
-                enable = true
+                enable = true,
+                modelError
             )
             TextFieldWithLabel(
                 text = "序列号",
@@ -242,7 +308,8 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
                 },
                 false,
-                enable = true
+                enable = true,
+                false
             )
             TextFieldWithLabel(
                 text = "供应商",
@@ -256,7 +323,8 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
                 },
                 false,
-                enable = true
+                enable = true,
+                false
             )
             TextFieldWithLabel(
                 text = "采购日期",
@@ -271,11 +339,12 @@ fun AssetChangeSingleScreen(navController: NavHostController,
                     datePickerDialog.show()
                 },
                 false,
-                enable = true
+                enable = true,
+                false
             )
             TextFieldWithLabel(
                 text = "价格",
-                label = "请输入价格",
+                label = priceLabel,
                 value = price,
                 onValueChange = { newCode ->
                     viewModel.updateAssetField { it.copy(price = newCode) }
@@ -285,7 +354,8 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
                 },
                 false,
-                enable = true
+                enable = true,
+                priceError
             )
             TextFieldWithLabel(
                 text = "备注",
@@ -299,7 +369,8 @@ fun AssetChangeSingleScreen(navController: NavHostController,
 
                 },
                 false,
-                enable = true
+                enable = true,
+                false
             )
 
 
@@ -387,7 +458,8 @@ fun TextFieldWithLabel(
     onValueChange: (String) -> Unit,
     onClick: () -> Unit,
     isRequired: Boolean, // 添加一个布尔参数来表示是否必填
-    enable: Boolean
+    enable: Boolean,
+    isError: Boolean
 ) {
     Column {
         Text(text = text, style = MaterialTheme.typography.bodySmall)
@@ -410,6 +482,7 @@ fun TextFieldWithLabel(
             },
             singleLine = true,
             enabled = enable, // 设置为禁用状态
+            isError = isError
         )
     }
 }
@@ -460,4 +533,8 @@ fun ChangeSuccessPopup() {
             }
         }
     }
+}
+
+fun isNumeric(value: String): Boolean {
+    return value.toDoubleOrNull() != null
 }

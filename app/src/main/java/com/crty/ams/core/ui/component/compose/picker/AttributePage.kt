@@ -32,11 +32,6 @@ fun AttributePage(
     showSheet: MutableState<Boolean>,
     navController: NavHostController,
     viewModel: AttributeViewModel = hiltViewModel(),
-//    assetRegisterViewModel: AssetRegisterViewModel = hiltViewModel(),
-//    inventoryDetailFilterViewModel: InventoryDetailFilterViewModel = hiltViewModel(),
-//    assetChangeSingleViewModel: AssetChangeSingleViewModel = hiltViewModel(),
-//    assetChangeBatchViewModel: AssetChangeBatchViewModel = hiltViewModel(),
-//    assetAllocationViewModel: AssetAllocationViewModel = hiltViewModel(),
     onDismiss: (String, Int) -> Unit, // 回调函数，用于返回数据
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
@@ -99,20 +94,14 @@ fun AttributePage(
                             // 从三级到一级依次判断是否非空，找到第一个非空的就停止判断
                             when {
                                 state.selectedThirdLevelId != null && state.thirdLevelAttributes != null -> {
-//                                    viewModel.getSelectedInfo(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!)
-//                                    viewModel.onAttributeSelected(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
                                     viewModel.getSelectedInfo(state.selectedThirdLevelId!!, state.thirdLevelAttributes!!)
                                         ?.let { onDismiss(it.name, it.id) }
                                 }
                                 state.selectedSecondLevelId != null && state.secondLevelAttributes != null -> {
-//                                    viewModel.getSelectedInfo(state.selectedSecondLevelId!!, state.secondLevelAttributes!!)
-//                                    viewModel.onAttributeSelected(state.selectedSecondLevelId!!, state.secondLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
                                     viewModel.getSelectedInfo(state.selectedSecondLevelId!!, state.secondLevelAttributes!!)
                                         ?.let { onDismiss(it.name, it.id) }
                                 }
                                 state.selectedFirstLevelId != null && state.firstLevelAttributes != null -> {
-//                                    viewModel.getSelectedInfo(state.selectedFirstLevelId!!, state.firstLevelAttributes!!)
-//                                    viewModel.onAttributeSelected(state.selectedFirstLevelId!!, state.firstLevelAttributes!!, attributeType, assetRegisterViewModel, inventoryDetailFilterViewModel, assetChangeSingleViewModel, assetChangeBatchViewModel, assetAllocationViewModel)
                                     viewModel.getSelectedInfo(state.selectedFirstLevelId!!, state.firstLevelAttributes!!)
                                         ?.let { onDismiss(it.name, it.id) }
                                 }

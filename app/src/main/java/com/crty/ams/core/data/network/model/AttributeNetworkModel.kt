@@ -61,16 +61,17 @@ data class AssetUnbindingMSRequest(
 
 //单个/批量资产变更请求
 data class AssetChangeRequest(
-    @SerializedName("asset_id") val ids: List<Int>,
-    @SerializedName("asset_category_id") val categoryId: Int,
-    @SerializedName("asset_name") val name: String,
-    @SerializedName("brand") val brand: String,
-    @SerializedName("model") val model: String,
-    @SerializedName("price") val price: Double,
-    @SerializedName("purchase_date") val date: String,
-    @SerializedName("sn") val sn: String,
-    @SerializedName("supplier") val supplier: String,
-    @SerializedName("remark") val remark: String,
+    @SerializedName("parent_asset_id") var parentId: Int?,
+    @SerializedName("asset_id") var ids: List<Int>?,
+    @SerializedName("asset_category_id") var categoryId: Int?,
+    @SerializedName("asset_name") var name: String?,
+    @SerializedName("brand") var brand: String?,
+    @SerializedName("model") var model: String?,
+    @SerializedName("price") var price: Double?,
+    @SerializedName("purchase_date") var date: String?,
+    @SerializedName("sn") var sn: String?,
+    @SerializedName("supplier") var supplier: String?,
+    @SerializedName("remark") var remark: String?,
 )
 
 

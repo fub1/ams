@@ -44,4 +44,9 @@ class AssetAllocationViewModel @Inject constructor(
 
         /* 在此根据用户id获取到所属部门信息，并修改值 */
     }
+
+    fun submit(){
+        println(_locationId.value)
+        println(_departmentId.value)
+    }
 }

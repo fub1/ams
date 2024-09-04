@@ -84,6 +84,7 @@ class AssetChangeSingleViewModel @Inject constructor(
         val newAttributesList = mutableListOf<Int>()
         newAttributesList.add(_asset.value.asset_id)
         val a = AssetChangeRequest(
+            parentId = null,
             ids = newAttributesList,
             categoryId = _asset.value.asset_category_id,
             name = _asset.value.asset_name,

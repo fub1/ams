@@ -230,6 +230,50 @@ class CoreRepository @Inject constructor(
         }
     }
 
+//    //  AssetCategoryResponse-取使用位置
+//    suspend fun getLocation(): Result<LocationResponse> {
+//        val token: String = "bearer " + appParameterRepository.getToken()
+//        val url: String = appParameterRepository.getBaseUrl()
+//        val port: Int = appParameterRepository.getBasePort()
+//        return try {
+//            val fullUrl = "${url}:${port}/api/basic/location"
+//            Log.d("CoreRepository", "Fetching location from: $fullUrl with token: $token")
+//            val response = coreApiService.getLocation(fullUrl, 1, token)
+//
+//            Log.d("CoreRepository", "Response code: ${response.body()?.code}")
+//            Log.d("CoreRepository", "get asset_category count: ${response.body()?.data?.size}")
+//
+//            // Part1- Token过期
+//            // 返回类code-1，vm中处理登出
+//            // Part2- 数据返回
+//            if (response.isSuccessful) {
+//                val feedbackMsg = response.body()?.message ?: "Unknown error"
+//                val assetCategorys: MutableList<AssetCategory> = mutableListOf()
+//                response.body()!!.data?.forEach { assetCategory ->
+//                    assetCategorys.add(assetCategory)
+//                    Log.d(
+//                        "CoreRepository",
+//                        "Add-ID${assetCategory.id} Location is ${assetCategory.description}, "
+//                    )
+//                }
+//
+//                val toResponse = AssetCategoryResponse(
+//                    data = assetCategorys,
+//                    code = 0,
+//                    message = feedbackMsg
+//                )
+//                Log.d("CoreRepository", "getLocation count: ${toResponse.message} ")
+//                return Result.success(toResponse)
+//
+//
+//            } else {
+//                return Result.success(AssetCategoryResponse(emptyList(), 1, "unknown error"))
+//            }
+//        } catch (e: Exception) {
+//            return Result.success(AssetCategoryResponse(emptyList(), 1, "unknown error"))
+//        }
+//    }
+
     // 创建资产分类
     suspend fun submitAssetCategory(
         attrName: String,
@@ -373,6 +417,43 @@ class CoreRepository @Inject constructor(
             Log.d("CoreRepository-RA", "Registration Asset from: $fullUrl with token: $token")
             val response =
                 coreApiService.submitAssetChange(fullUrl, 1, token, assetChangeRequest)
+            Log.d("CoreRepository", "Response code: ${response.body()?.code}")
+
+            if (response.code() == 401) {
+                Log.d("CoreRepository", "Token expired")
+                return Result.success(SubmitResponse("", -1, "Token expired"))
+            } else {
+                if (response.isSuccessful) {
+                    val toResponse = SubmitResponse(
+                        data = response.body()?.data.toString(),
+                        code = response.body()?.code ?: 1,
+                        message = response.body()?.message ?: "Unknown error"
+                    )
+
+                    Log.d("CoreRepository", "submitAssetRegistration: ${toResponse.code} ")
+
+                    return Result.success(toResponse)
+                } else {
+                    return Result.success(SubmitResponse("", 1, "unknown error"))
+                }
+            }
+        } catch (e: Exception) {
+            return Result.success(SubmitResponse("", 1, "unknown error"))
+        }
+    }
+
+    // 成组资产变更
+    suspend fun submitAssetChangeGroup(
+        assetChangeRequest: AssetChangeRequest
+    ): Result<SubmitResponse> {
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
+        return try {
+            val fullUrl = "${url}:${port}/api/assetbusiness/asset/change/group"
+            Log.d("CoreRepository-RA", "Registration Asset from: $fullUrl with token: $token")
+            val response =
+                coreApiService.submitAssetChangeGroup(fullUrl, 1, token, assetChangeRequest)
             Log.d("CoreRepository", "Response code: ${response.body()?.code}")
 
             if (response.code() == 401) {

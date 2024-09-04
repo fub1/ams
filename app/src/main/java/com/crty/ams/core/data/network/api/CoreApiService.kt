@@ -109,6 +109,15 @@ interface CoreApiService {
         @Body requestBody: AssetChangeRequest
     ): Response<SubmitResponse>
 
+    //成组资产变更
+    @POST
+    suspend fun submitAssetChangeGroup(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String,
+        @Body requestBody: AssetChangeRequest
+    ): Response<SubmitResponse>
+
 
 
 

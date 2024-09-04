@@ -66,6 +66,10 @@ fun AssetChangeBatchScreen(navController: NavHostController,
     val textFieldValue by viewModel.inputText.collectAsState()
 
     val attributeValue by viewModel.attributeValue.collectAsState()
+    val attributeValueError by viewModel.attributeValueError.collectAsState()
+    val attributeValueDialog by viewModel.attributeValueDialog.collectAsState()
+    val attributeValueDialogMsg by viewModel.attributeValueDialogMsg.collectAsState()
+
 
     val showSingleRollerSheet = remember { mutableStateOf(false) }
 
@@ -168,7 +172,9 @@ fun AssetChangeBatchScreen(navController: NavHostController,
                 Spacer(modifier = Modifier.height(16.dp)) // 间距
                 OutlinedTextField(
                     value = attributeValue,
-                    onValueChange = { viewModel.updateAttributeValue(it) /* 更新 ViewModel 中的值*/ },
+                    onValueChange = {
+                        viewModel.updateAttributeValueError()
+                        viewModel.updateAttributeValue(it) /* 更新 ViewModel 中的值*/ },
                     modifier = Modifier
                         .fillMaxWidth()
                         .pointerInteropFilter {
@@ -191,7 +197,8 @@ fun AssetChangeBatchScreen(navController: NavHostController,
                         )
                     },
                     singleLine = true,
-                    enabled = textFieldValue.isNotEmpty()
+                    enabled = textFieldValue.isNotEmpty(),
+                    isError = attributeValueError
                 )
                 Spacer(modifier = Modifier.height(40.dp)) // 间距
 
@@ -284,5 +291,17 @@ fun AssetChangeBatchScreen(navController: NavHostController,
             )
         }
 
+        if (attributeValueDialog) {
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissAttributeDialog() },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.dismissAttributeDialog() }) {
+                        Text("确定")
+                    }
+                },
+                title = { Text("数据异常") },
+                text = { Text(attributeValueDialogMsg) }
+            )
+        }
     }
 }

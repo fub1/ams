@@ -56,9 +56,9 @@ fun AssetAllocationScreen(navController: NavHostController, viewModel: AssetAllo
     val selectedAttributeType = remember { mutableStateOf("") }
 
     val locationError by remember { mutableStateOf(false) }
-    val locationLabel by remember { mutableStateOf("请选择使用位置") }
+    val locationLabel by remember { mutableStateOf("* 请选择使用位置") }
     val departmentError by remember { mutableStateOf(false) }
-    val departmentLabel by remember { mutableStateOf("请选择使用部门") }
+    val departmentLabel by remember { mutableStateOf("* 请选择使用部门") }
     val userError by remember { mutableStateOf(false) }
     val userLabel by remember { mutableStateOf("请选择使用人") }
 
@@ -94,7 +94,7 @@ fun AssetAllocationScreen(navController: NavHostController, viewModel: AssetAllo
                 onValueChange = {  },
                 onClick = {
                     // Handle click event here
-                    selectedAttributeType.value = "资产调拨位置"
+                    selectedAttributeType.value = "使用位置"
                     showSheet.value = true
 
                 },
@@ -107,7 +107,7 @@ fun AssetAllocationScreen(navController: NavHostController, viewModel: AssetAllo
                 onValueChange = {  },
                 onClick = {
                     // Handle click event here
-                    selectedAttributeType.value = "资产调拨部门"
+                    selectedAttributeType.value = "使用部门"
                     showSheet.value = true
 
                 },
@@ -120,7 +120,7 @@ fun AssetAllocationScreen(navController: NavHostController, viewModel: AssetAllo
                 onValueChange = {  },
                 onClick = {
                     // Handle click event here
-                    selectedAttributeType.value = "资产调拨使用人"
+                    selectedAttributeType.value = "使用人"
                     showSheet.value = true
 
                 },
@@ -131,7 +131,7 @@ fun AssetAllocationScreen(navController: NavHostController, viewModel: AssetAllo
             Button(
                 onClick = {
                     /* 跳转到批量修改页面 */
-
+                    viewModel.submit()
 
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -149,18 +149,18 @@ fun AssetAllocationScreen(navController: NavHostController, viewModel: AssetAllo
                     onDismiss = { data, number ->
                         // 回传数据给 AssetRegisterScreen 的 ViewModel
                         when(selectedAttributeType.value){
-                            "资产调拨位置" -> {
+                            "使用位置" -> {
                                 viewModel.updateLocationValueId(data, number)
                                 showSheet.value = false // 关闭 ModalBottomSheet
                             }
-                            "资产调拨部门" -> {
+                            "使用部门" -> {
                                 viewModel.updateDepartmentValueId(data, number)
                                 showSheet.value = false // 关闭 ModalBottomSheet
                             }
-                            "资产调拨使用人" -> {
-                                viewModel.updateUserValueId(data, number)
-                                showSheet.value = false // 关闭 ModalBottomSheet
-                            }
+//                            "使用人" -> {
+//                                viewModel.updateUserValueId(data, number)
+//                                showSheet.value = false // 关闭 ModalBottomSheet
+//                            }
                         }
                     }
                 )

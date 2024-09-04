@@ -9,6 +9,8 @@ import com.crty.ams.asset.ui.asset_change_single.viewmodel.AssetChangeSingleView
 import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
 import com.crty.ams.asset.ui.asset_inventory_detail_filter.viewmodel.InventoryDetailFilterViewModel
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
+import com.crty.ams.core.data.network.model.DepartmentResponse
+import com.crty.ams.core.data.network.model.LocationResponse
 import com.crty.ams.core.data.repository.CoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -96,6 +98,52 @@ open class AttributeViewModel  @Inject constructor(
                 "资产分类" -> {
                     val result: Result<AssetCategoryResponse> = coreRepository.getAssetCategory()
 //                    println("返回值${result.getOrNull()?.data?.get(0)?.id}")
+                    // 遍历 result.getOrNull()?.data 并创建新的 AttributeEntity 对象
+                    val newAttributesList = mutableListOf<AttributeEntity>()
+                    result.getOrNull()?.data?.forEach { attributeData ->
+                        // 假设 attributeData 是你想要转换为 AttributeEntity 的数据类型
+                        val attributeEntity = AttributeEntity(
+                            // 在这里填充 AttributeEntity 的属性
+                            id = attributeData.id,
+                            parentId = attributeData.parentId,
+                            name = attributeData.description
+                            // 其他属性...
+                        )
+                        // 将新创建的 AttributeEntity 对象添加到列表中
+                        newAttributesList.add(attributeEntity)
+                    }
+
+                    _allAttributes = newAttributesList
+
+                    _state.value = _state.value.copy(
+                        firstLevelAttributes = _allAttributes.filter { it.parentId == 0 }
+                    )
+                }
+                "使用位置" -> {
+                    val result: Result<LocationResponse> = coreRepository.getLocations()
+                    // 遍历 result.getOrNull()?.data 并创建新的 AttributeEntity 对象
+                    val newAttributesList = mutableListOf<AttributeEntity>()
+                    result.getOrNull()?.data?.forEach { attributeData ->
+                        // 假设 attributeData 是你想要转换为 AttributeEntity 的数据类型
+                        val attributeEntity = AttributeEntity(
+                            // 在这里填充 AttributeEntity 的属性
+                            id = attributeData.id,
+                            parentId = attributeData.parentId,
+                            name = attributeData.description
+                            // 其他属性...
+                        )
+                        // 将新创建的 AttributeEntity 对象添加到列表中
+                        newAttributesList.add(attributeEntity)
+                    }
+
+                    _allAttributes = newAttributesList
+
+                    _state.value = _state.value.copy(
+                        firstLevelAttributes = _allAttributes.filter { it.parentId == 0 }
+                    )
+                }
+                "使用部门" -> {
+                    val result: Result<DepartmentResponse> = coreRepository.getDepartment()
                     // 遍历 result.getOrNull()?.data 并创建新的 AttributeEntity 对象
                     val newAttributesList = mutableListOf<AttributeEntity>()
                     result.getOrNull()?.data?.forEach { attributeData ->
