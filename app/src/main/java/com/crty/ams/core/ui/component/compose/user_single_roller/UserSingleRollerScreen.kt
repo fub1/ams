@@ -1,24 +1,39 @@
-package com.crty.ams.core.ui.component.compose.single_field_roller
+package com.crty.ams.core.ui.component.compose.user_single_roller
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.foundation.interaction.DragInteraction
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,18 +42,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.crty.ams.asset.ui.asset_change_batch.viewmodel.AssetChangeBatchViewModel
+import com.crty.ams.core.data.model.UserAttributeEntity
+import com.crty.ams.core.ui.component.compose.single_field_roller.SingleFieldRollerViewModel
+import com.crty.ams.core.ui.compose.single_roller.SingleRollerViewModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SingleFieldRollerScreen(
+fun UserSingleRollerScreen(
+    departmentId: Int,
     showSheet: MutableState<Boolean>,
     onConfirm: (Int) -> Unit, // Callback to return selected user ID
-    assetChangeBatchViewModel: AssetChangeBatchViewModel = hiltViewModel(),
-    singleFieldRollerViewModel: SingleFieldRollerViewModel = hiltViewModel()
+    viewModel: UserSingleRollerViewModel = hiltViewModel(),
+    onDismiss: (Int, String, Int, String) -> Unit, // 回调函数，用于返回数据
 ) {
     var selectedUserIndex by remember { mutableStateOf(0) }
 
@@ -51,7 +69,11 @@ fun SingleFieldRollerScreen(
         }
     )
 
-    val fieldList by singleFieldRollerViewModel.userList.collectAsState()
+    val fieldList by viewModel.userList.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchAllAttributes(departmentId)
+    }
 
     ModalBottomSheet(
         onDismissRequest = { showSheet.value = false },
@@ -64,7 +86,7 @@ fun SingleFieldRollerScreen(
         ) {
             // 顶部描述文本
             Text(
-                text = "请选择用户信息",
+                text = "请选择使用人",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -74,8 +96,7 @@ fun SingleFieldRollerScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(text = "属性名", modifier = Modifier.padding(bottom = 8.dp))
-//                Text(text = "用户编号", modifier = Modifier.padding(bottom = 8.dp))
+                Text(text = "使用人名称", modifier = Modifier.padding(bottom = 8.dp))
             }
 
             // 单个滚轮 - 显示用户名和用户编码
@@ -98,8 +119,7 @@ fun SingleFieldRollerScreen(
             ) {
                 Button(
                     onClick = {
-//                        onConfirm(userList[selectedUserIndex].id) // 返回选择的用户 ID
-                        assetChangeBatchViewModel.updateInputText(fieldList[selectedUserIndex])
+                        onDismiss(fieldList[selectedUserIndex].id, fieldList[selectedUserIndex].name, fieldList[selectedUserIndex].departmentId, fieldList[selectedUserIndex].departmentName)
                         showSheet.value = false
                     }
                 ) {
@@ -121,7 +141,7 @@ fun SingleFieldRollerScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WheelPicker(
-    items: List<String>,
+    items: List<UserAttributeEntity>,
     onItemSelected: (index: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -149,7 +169,7 @@ fun WheelPicker(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Text(
-                        text = field,
+                        text = field.name,
                         fontSize = 18.sp,
                         fontWeight = if (index == centerIndex.value) FontWeight.Bold else FontWeight.Light,
                     )

@@ -15,4 +15,5 @@
     <string name="asset_screen_assetChangeBatchScreen_topBar">资产变更-批量</string>
     <string name="asset_screen_assetAllocationScreen_topBar">资产调拨</string>
     <string name="asset_screen_assetUnbindingScreen_topBar_MS">资产解绑（主从）</string>
+    <string name="asset_screen_assetCollectScreen_topBar">资产领用</string>
 </resources>

@@ -139,7 +139,9 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
         }
         9 -> {
             println("allocation button clicked")
-            navController.navigate("assetAllocation") {
+            val ids = listOf(1, 2, 3)
+            val assetListJson = Json.encodeToString(ids)
+            navController.navigate("assetAllocation/$assetListJson") {
                 popUpTo("home") { inclusive = true }
             }
         }
@@ -154,6 +156,13 @@ private fun handleButtonClick(id: Int, navController: NavHostController) {
             val assetListJson = Json.encodeToString(rawAssets)
             println("unbinding button clicked")
             navController.navigate("assetUnbindingMS/$assetListJson") {
+                popUpTo("home") { inclusive = true }
+            }
+        }
+        11 -> {
+            val ids = listOf(1, 2, 3)
+            val assetListJson = Json.encodeToString(ids)
+            navController.navigate("assetCollect/$assetListJson") {
                 popUpTo("home") { inclusive = true }
             }
         }

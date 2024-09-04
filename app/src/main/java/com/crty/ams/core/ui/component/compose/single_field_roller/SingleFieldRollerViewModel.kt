@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class SingleRollerViewModel  @Inject constructor(
+open class SingleFieldRollerViewModel  @Inject constructor(
 
 ) : ViewModel() {
 

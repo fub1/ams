@@ -2,6 +2,7 @@
 package com.crty.ams.core.data.network.api
 
 
+import com.crty.ams.core.data.network.model.AssetAllocationRequest
 import com.crty.ams.core.data.network.model.AssetCategoryRequest
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
 import com.crty.ams.core.data.network.model.AssetChangeRequest
@@ -11,6 +12,7 @@ import com.crty.ams.core.data.network.model.DepartmentResponse
 import com.crty.ams.core.data.network.model.LocationResponse
 import com.crty.ams.core.data.network.model.LoginRequest
 import com.crty.ams.core.data.network.model.LoginResponse
+import com.crty.ams.core.data.network.model.PersonResponse
 import com.crty.ams.core.data.network.model.SubmitResponse
 import com.crty.ams.core.data.network.model.SystemStampResponse
 import okhttp3.OkHttpClient
@@ -54,6 +56,14 @@ interface CoreApiService {
         @Header("Language") language: Int,
         @Header("Authorization") token: String
     ): Response<DepartmentResponse>
+
+    // 使用人查询
+    @GET
+    suspend fun getPerson(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String
+    ): Response<PersonResponse>
 
 
     // 地点查询
@@ -116,6 +126,15 @@ interface CoreApiService {
         @Header("Language") language: Int,
         @Header("Authorization") token: String,
         @Body requestBody: AssetChangeRequest
+    ): Response<SubmitResponse>
+
+    //资产调拨
+    @POST
+    suspend fun submitAssetAllocation(
+        @Url fullUrl: String,
+        @Header("Language") language: Int,
+        @Header("Authorization") token: String,
+        @Body requestBody: AssetAllocationRequest
     ): Response<SubmitResponse>
 
 

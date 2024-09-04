@@ -7,6 +7,7 @@ import android.util.Log
 import android.util.Printer
 import com.crty.ams.core.data.datastore.di.AppParameterDataStore
 import com.crty.ams.core.data.network.api.CoreApiService
+import com.crty.ams.core.data.network.model.AssetAllocationRequest
 import com.crty.ams.core.data.network.model.AssetCategory
 import com.crty.ams.core.data.network.model.AssetCategoryRequest
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
@@ -20,6 +21,9 @@ import com.crty.ams.core.data.network.model.LocationResponse
 import com.crty.ams.core.data.network.model.LoginRequest
 import com.crty.ams.core.data.network.model.LoginResponse
 import com.crty.ams.core.data.network.model.LoginResult
+import com.crty.ams.core.data.network.model.Person
+import com.crty.ams.core.data.network.model.PersonData
+import com.crty.ams.core.data.network.model.PersonResponse
 import com.crty.ams.core.data.network.model.SubmitResponse
 import com.crty.ams.core.data.network.model.SystemStampResponse
 import kotlinx.coroutines.flow.first
@@ -82,6 +86,59 @@ class CoreRepository @Inject constructor(
             }
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    suspend fun getUser(departmentId: Int): Result<PersonResponse> {
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
+        return try {
+            val fullUrl = if (departmentId == 0) {
+                "${url}:${port}/api/Basic/person"
+            } else {
+                "${url}:${port}/api/Basic/person?department_id=$departmentId"
+            }
+            Log.d("CoreRepository", "Fetching person from: $fullUrl with token: $token")
+            val response = coreApiService.getPerson(fullUrl, 1, token)
+
+            Log.d("CoreRepository", "Response code: ${response.code()}")
+            Log.d("CoreRepository", "get dprt count: ${response.body()?.data?.list?.size}")
+
+            // Part1- Token过期
+            // 返回类code-1，vm中处理登出
+            if (response.code() == 401) {
+                Log.d("CoreRepository", "Token expired")
+                return Result.success(PersonResponse(PersonData(emptyList()), -1, "Token expired"))
+            }
+            // Part2- 数据返回
+            if (response.isSuccessful) {
+                val feedbackMsg = response.body()?.message ?: "Unknown error"
+                val persons: MutableList<Person> = mutableListOf()
+                response.body()!!.data.list?.forEach { person ->
+                    persons.add(person)
+                    Log.d(
+                        "CoreRepository",
+                        "Add-ID${person.id} Department is ${person.name}, "
+                    )
+                }
+
+                val departmentResponse = PersonResponse(
+                    data = PersonData(persons),
+                    code = 0,
+                    message = feedbackMsg
+                )
+                Log.d("CoreRepository", "getDepartment count: ${departmentResponse.message} ")
+                return Result.success(departmentResponse)
+            } else {
+                Log.d("CoreRepository", "getDepartment failed: ${response.body()?.message}")
+                return Result.success(PersonResponse(PersonData(emptyList()), 1, "unknown error"))
+
+            }
+
+            // Part3- 异常返回
+        } catch (e: Exception) {
+            return Result.success(PersonResponse(PersonData(emptyList()), 1, "unknown error"))
         }
     }
 
@@ -454,6 +511,45 @@ class CoreRepository @Inject constructor(
             Log.d("CoreRepository-RA", "Registration Asset from: $fullUrl with token: $token")
             val response =
                 coreApiService.submitAssetChangeGroup(fullUrl, 1, token, assetChangeRequest)
+            Log.d("CoreRepository", "Response code: ${response.body()?.code}")
+
+            if (response.code() == 401) {
+                Log.d("CoreRepository", "Token expired")
+                return Result.success(SubmitResponse("", -1, "Token expired"))
+            } else {
+                if (response.isSuccessful) {
+                    val toResponse = SubmitResponse(
+                        data = response.body()?.data.toString(),
+                        code = response.body()?.code ?: 1,
+                        message = response.body()?.message ?: "Unknown error"
+                    )
+
+                    Log.d("CoreRepository", "submitAssetRegistration: ${toResponse.code} ")
+
+                    return Result.success(toResponse)
+                } else {
+                    return Result.success(SubmitResponse("", 1, "unknown error"))
+                }
+            }
+        } catch (e: Exception) {
+            return Result.success(SubmitResponse("", 1, "unknown error"))
+        }
+    }
+
+
+    // 资产调拨
+    suspend fun submitAssetAllocation(
+        assetAllocationRequest: AssetAllocationRequest
+    ): Result<SubmitResponse> {
+        val token: String = "bearer " + appParameterRepository.getToken()
+        val url: String = appParameterRepository.getBaseUrl()
+        val port: Int = appParameterRepository.getBasePort()
+        return try {
+            val fullUrl = "${url}:${port}/api/assetbusiness/asset/transfer"
+            Log.d("CoreRepository-RA", "Registration Asset from: $fullUrl with token: $token")
+
+            val response =
+                coreApiService.submitAssetAllocation(fullUrl, 1, token, assetAllocationRequest)
             Log.d("CoreRepository", "Response code: ${response.body()?.code}")
 
             if (response.code() == 401) {

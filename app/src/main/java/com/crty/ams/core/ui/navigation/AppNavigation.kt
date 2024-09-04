@@ -15,6 +15,7 @@ import com.crty.ams.asset.ui.asset_allocation.screen.AssetAllocationScreen
 import com.crty.ams.asset.ui.asset_change_batch.screen.AssetChangeBatchScreen
 import com.crty.ams.asset.ui.asset_change_single.screen.AssetChangeSingleScreen
 import com.crty.ams.asset.ui.asset_check.screen.AssetCheckViewModel
+import com.crty.ams.asset.ui.asset_collect.screen.AssetCollectScreen
 import com.crty.ams.asset.ui.asset_register.screen.AssetRegisterScreen
 import com.crty.ams.core.ui.compose.multilevel_list.MultilevelListScreen
 import com.crty.ams.core.ui.compose.picker.AttributeScreen
@@ -119,8 +120,13 @@ fun AppNavigation(start: RouteList) {
             val assetIdList: List<Int> = Json.decodeFromString(assetInfoJson)
             AssetChangeBatchScreen(navController, type, assetIdList)
         }
-        composable(route = RouteList.AssetAllocation.description) {
-            AssetAllocationScreen(navController)
+        composable(route = RouteList.AssetAllocation.description,
+            arguments = listOf(
+                navArgument("ids") { type = NavType.StringType },
+            )) {backStackEntry ->
+            val assetInfoJson = backStackEntry.arguments?.getString("ids") ?: ""
+            val assetIdList: List<Int> = Json.decodeFromString(assetInfoJson)
+            AssetAllocationScreen(navController, assetIdList)
         }
         composable(
             route = RouteList.AssetUnbindingMS.description,
@@ -132,6 +138,18 @@ fun AppNavigation(start: RouteList) {
             val assetList: List<AssetForGroup> = Json.decodeFromString(assetListJson)
 
             AssetUnbindingScreen(navController, assetList)
+        }
+
+        composable(
+            route = RouteList.AssetCollect.description,
+            arguments = listOf(
+                navArgument("ids") { type = NavType.StringType },
+            )
+        ) {backStackEntry ->
+            val assetListJson = backStackEntry.arguments?.getString("ids") ?: ""
+            val assetList: List<Int> = Json.decodeFromString(assetListJson)
+
+            AssetCollectScreen(navController, assetList)
         }
     }
 }
@@ -154,8 +172,9 @@ enum class RouteList(val description: String) {
     MultilevelListTest("multilevelListTest"),
     AssetChangeSingle("assetChangeSingle/{assetInfo}"),
     AssetChangeBatch("assetChangeBatch/{type}/{ids}"),
-    AssetAllocation("assetAllocation"),
+    AssetAllocation("assetAllocation/{ids}"),
     AssetUnbindingMS("assetUnbindingMS/{assetsList}"),/*主从资产解绑*/
+    AssetCollect("assetCollect/{ids}"),/* 资产领用 */
 }
 
 fun parseAssetList(json: String?): List<AssetForGroup> {

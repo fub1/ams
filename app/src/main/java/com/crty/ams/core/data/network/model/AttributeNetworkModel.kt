@@ -2,6 +2,7 @@ package com.crty.ams.core.data.network.model
 
 import com.google.gson.annotations.SerializedName
 import com.crty.ams.core.data.model.AttributeEntity
+import com.crty.ams.core.data.model.UserAttributeEntity
 
 data class LocationResponse(
     val data: List<Location >?,
@@ -19,6 +20,16 @@ data class AssetCategoryResponse(
     val data: List< AssetCategory >?,
     val code: Int,
     val message: String
+)
+
+data class PersonResponse(
+    val data: PersonData,
+    val code: Int,
+    val message: String
+)
+
+class PersonData(
+    val list: List< Person >?
 )
 
 
@@ -74,6 +85,15 @@ data class AssetChangeRequest(
     @SerializedName("remark") var remark: String?,
 )
 
+//资产调拨
+data class AssetAllocationRequest(
+    @SerializedName("asset_id") var assetId: List<Int>,
+    @SerializedName("after_department_id") var afterDepartmentId: Int?,
+    @SerializedName("after_location_id") var afterLocationId: Int?,
+    @SerializedName("after_personnel_id") var afterPersonnelId: Int?,
+    @SerializedName("remark") var remark: String?,
+)
+
 
 
 
@@ -99,3 +119,15 @@ class AssetCategory(
     @SerializedName("parent_id") override val parentId: Int,
     @SerializedName("asset_category_desc")val description: String,
 ) : AttributeEntity(id,parentId, description )
+
+class Person(
+    @SerializedName("personnel_id") override val id: Int,
+    @SerializedName("personnel_name") override val name: String,
+    @SerializedName("department_id") override val departmentId: Int,
+    @SerializedName("department_name") override val departmentName: String,
+) : UserAttributeEntity(id, name, departmentId, departmentName)
+//class Person(
+//    @SerializedName("personnel_id") override val id: Int,
+//    @SerializedName("department_id") override val parentId: Int,
+//    @SerializedName("personnel_name")val description: String,
+//) : AttributeEntity(id,parentId, description )
