@@ -33,7 +33,11 @@ import com.crty.ams.core.ui.component.ExposedDropdownMenu
 fun AddAttributeWithCodeSkeleton(
     attributeType: String = "",
     firstLevelAttribute: List<AttributeEntity>? = listOf(),
-    secondLevelAttribute: List<AttributeEntity>? = listOf(), //可以为空
+    secondLevelAttribute: List<AttributeEntity>? = listOf(),
+    firstLevelSelectId: MutableState<Int?> = mutableStateOf(null),
+    secondLevelSelectId: MutableState<Int?> = mutableStateOf(null),
+    onFirstLevelSelect: (Int) -> Unit = {},
+    onSecondLevelSelect: (Int) -> Unit = {},
     goBack: () -> Unit = {},
     addAttribute: (attrName: String, attrCode: String) -> Unit = { _, _ -> }
     ) {
@@ -87,7 +91,8 @@ fun AddAttributeWithCodeSkeleton(
                     options = firstLevelAttribute,
                     selectedOption = "",
                     onOptionSelected = {
-                        selectedFirstLevelId.value = it
+                        firstLevelSelectId.value = it
+                        onFirstLevelSelect(it)
                     }
                 )
                 EditArea(attrName, attrCode)
@@ -98,7 +103,8 @@ fun AddAttributeWithCodeSkeleton(
                     options = firstLevelAttribute,
                     selectedOption = "",
                     onOptionSelected = {
-                        selectedFirstLevelId.value = it
+                        firstLevelSelectId.value = it
+                        onFirstLevelSelect(it)
                     }
                 )
                 ExposedDropdownMenu(
@@ -106,7 +112,8 @@ fun AddAttributeWithCodeSkeleton(
                     options = secondLevelAttribute!!,
                     selectedOption = "",
                     onOptionSelected = {
-                        selectedSecondLevelId.value = it
+                        secondLevelSelectId.value = it
+                        onSecondLevelSelect(it)
                     }
                 )
                 EditArea(attrName, attrCode)
