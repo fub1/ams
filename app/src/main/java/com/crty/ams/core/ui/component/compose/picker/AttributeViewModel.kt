@@ -1,17 +1,14 @@
-package com.crty.ams.core.ui.compose.picker
+package com.crty.ams.core.ui.component.compose.picker
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.crty.ams.asset.ui.asset_allocation.viewmodel.AssetAllocationViewModel
-import com.crty.ams.asset.ui.asset_change_batch.viewmodel.AssetChangeBatchViewModel
-import com.crty.ams.asset.ui.asset_change_single.viewmodel.AssetChangeSingleViewModel
-import com.crty.ams.asset.ui.asset_register.viewmodel.AssetRegisterViewModel
-import com.crty.ams.asset.ui.asset_inventory_detail_filter.viewmodel.InventoryDetailFilterViewModel
 import com.crty.ams.core.data.network.model.AssetCategoryResponse
 import com.crty.ams.core.data.network.model.DepartmentResponse
 import com.crty.ams.core.data.network.model.LocationResponse
 import com.crty.ams.core.data.repository.CoreRepository
+import com.crty.ams.core.ui.compose.picker.AttributeEntity
+import com.crty.ams.core.ui.compose.picker.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -214,12 +211,16 @@ open class AttributeViewModel  @Inject constructor(
         Log.i("AttributeViewModel", "onFirstLevelSelected: $id")
 
         _state.value = _state.value.copy(
-            secondLevelAttributes = _allAttributes.filter { it.parentId == id },
             selectedFirstLevelId = _allAttributes.find { it.id == id }?.id,
             selectedSecondLevelId = null,
             selectedThirdLevelId = null,
-
+            // 选中1级后，要注册2级菜单数据
+            secondLevelAttributes = _allAttributes.filter { it.parentId == id },
+            // 选中1级后，要清空3级菜单数据
+            thirdLevelAttributes = _allAttributes.filter { it.parentId == -1 },
         )
+        Log.i("AttributeViewModel", "onFirstLevelSelected: ${_allAttributes.filter { it.parentId == -1 }.size}")
+
     }
 
     fun onSecondLevelSelected(id: Int) {

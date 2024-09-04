@@ -6,17 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.crty.ams.core.data.model.AssetInfo
 import com.crty.ams.core.data.network.model.AssetChangeRequest
 import com.crty.ams.core.data.repository.CoreRepository
-import com.crty.ams.core.ui.compose.picker.AttributeEntity
-import com.crty.ams.core.ui.compose.picker.AttributeViewModel.AttributeViewMode
-import com.crty.ams.core.ui.compose.picker.AttributeViewModel.AttributeViewState
-import com.crty.ams.core.ui.compose.picker.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject

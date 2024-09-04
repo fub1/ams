@@ -19,7 +19,7 @@ import com.crty.ams.asset.ui.asset_collect.screen.AssetCollectScreen
 import com.crty.ams.asset.ui.asset_register.screen.AssetRegisterScreen
 import com.crty.ams.core.ui.compose.multilevel_list.MultilevelListScreen
 import com.crty.ams.core.ui.compose.picker.AttributeScreen
-import com.crty.ams.core.ui.compose.picker.AttributeViewModel
+import com.crty.ams.core.ui.component.compose.picker.AttributeViewModel
 import com.crty.ams.core.ui.compose.roll_list.ComposeScreen
 import com.crty.ams.core.ui.screen.HomeScreen
 import com.crty.ams.core.ui.screen.LoginScreen

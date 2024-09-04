@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.crty.ams.core.ui.compose.picker.AddAttributeWithCodeSkeleton
-import com.crty.ams.core.ui.compose.picker.AttributeViewModel
 import com.crty.ams.core.ui.compose.picker.LoadingContainer
 
 @SuppressLint("UnrememberedMutableState")
