@@ -113,7 +113,10 @@ open class AttributeViewModel  @Inject constructor(
                     _allAttributes = newAttributesList
 
                     _state.value = _state.value.copy(
-                        firstLevelAttributes = _allAttributes.filter { it.parentId == 0 }
+                        firstLevelAttributes = _allAttributes.filter { it.parentId == 0 },
+                                // Same Screen Different Data picker, fetch data need clear 2nd and 3rd level data
+                        secondLevelAttributes = emptyList(),
+                        thirdLevelAttributes = emptyList(),
                     )
                 }
                 "使用位置" -> {
